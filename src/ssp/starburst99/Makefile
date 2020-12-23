@@ -2,7 +2,11 @@
 # Makefile for the code GALAXY
 # - version Sun Solaris (1997)
 #------------------------------------------------------
+<<<<<<< HEAD
 SOURCES = galaxy.f#_wonly_js.f
+=======
+SOURCES = galaxy_wonly_js.f
+>>>>>>> 02036fc... src dir & sb99 codes
 
 OBJECTS = $(SOURCES:.f=.o)
 
@@ -28,6 +32,10 @@ LINK   = gfortran
 
 #------------------------------------------------------
 galaxy: $(OBJECTS) Makefile
+<<<<<<< HEAD
 	$(LINK) $(LFLAGS) $(OBJECTS) -o galaxy $(LIBS)
+=======
+	$(LINK) $(LFLAGS) $(OBJECTS) -o galaxy_wonly_js $(LIBS)
+>>>>>>> 02036fc... src dir & sb99 codes
 
 $(OBJECTS): $(INCLUDES)

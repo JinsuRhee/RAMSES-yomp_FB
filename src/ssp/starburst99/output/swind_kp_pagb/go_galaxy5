@@ -13,12 +13,20 @@ set    drun=/home/jinsu/RAMSES-yomp_FB/src/ssp/starburst99/output/swind_kp_pagb
 set  ninput=standard.input5
 #           Name and extension number of output files:
 #           --> files will be: noutput.colornext, noutput.quantnext etc.
+<<<<<<< HEAD
 set noutput=m45_sn/standard
+=======
+set noutput=m45/standard
+>>>>>>> 02036fc... src dir & sb99 codes
 set    next=1
 #           Directory where code is:
 set   dcode=/home/jinsu/RAMSES-yomp_FB/src/ssp/starburst99/
 #          Name of code: 
+<<<<<<< HEAD
 set   ncode=galaxy#_wonly_js
+=======
+set   ncode=galaxy_wonly_js
+>>>>>>> 02036fc... src dir & sb99 codes
 #           Directory where libraries are:
 set   dlib=/home/jinsu/RAMSES-yomp_FB/src/ssp/starburst99
 #- - - - - - - DO NOT MODIFY below this line - - - - - - - - - - - - - -
