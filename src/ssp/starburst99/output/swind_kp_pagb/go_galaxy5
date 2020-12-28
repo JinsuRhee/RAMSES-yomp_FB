@@ -15,6 +15,7 @@ set  ninput=standard.input5
 #           --> files will be: noutput.colornext, noutput.quantnext etc.
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 set noutput=m45_sn/standard
 =======
 set noutput=m45/standard
@@ -22,6 +23,9 @@ set noutput=m45/standard
 =======
 set noutput=m45_sn/standard
 >>>>>>> fecffcf... test
+=======
+set noutput=m45/standard
+>>>>>>> d9e96e4... running scripts for the new ver.
 set    next=1
 #           Directory where code is:
 set   dcode=/home/jinsu/RAMSES-yomp_FB/src/ssp/starburst99/
