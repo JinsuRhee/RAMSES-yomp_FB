@@ -4400,14 +4400,19 @@ c
 c    
        
 	write(93,500)time_in,
-     *    alog10(yieh+1.e-30),
-     *    alog10(yiehe+1.e-30),alog10(yiec+1.e-30),
-     *    alog10(yien+1.e-30),alog10(yieo+1.e-30),
-     *    alog10(yiemg+1.e-30),alog10(yiesi+1.e-30),
-     *    alog10(yies+1.e-30),alog10(yiefe+1.e-30),
+     *    alog10(yieh1+1.e-30),
+     *    alog10(yiehe1+1.e-30),alog10(yiec1+1.e-30),
+     *    alog10(yien1+1.e-30),alog10(yieo1+1.e-30),
+     *    alog10(yiemg1+1.e-30),alog10(yiesi1+1.e-30),
+     *    alog10(yies1+1.e-30),alog10(yiefe1+1.e-30),
+     *    alog10(yieh2+1.e-30),
+     *    alog10(yiehe2+1.e-30),alog10(yiec2+1.e-30),
+     *    alog10(yien2+1.e-30),alog10(yieo2+1.e-30),
+     *    alog10(yiemg2+1.e-30),alog10(yiesi2+1.e-30),
+     *    alog10(yies2+1.e-30),alog10(yiefe2+1.e-30),
      *    alog10(yield1+1.e-30),alog10(yield2+1.e-30),
      *    alog10(yield+1.e-30),alog10(tmass+1.e-30)
-500    format(1x,e10.5,2x,9f8.3,2x,f8.3,2x,f8.3,2x,f8.3,2x,f8.3)
+500    format(1x,e10.5,2x,18f8.3,2x,f8.3,2x,f8.3,2x,f8.3,2x,f8.3)
 c
 c      	   write(930,600)
 c600 	   format('  <datarow>')
