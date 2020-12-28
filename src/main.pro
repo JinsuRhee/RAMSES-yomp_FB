@@ -19,13 +19,22 @@ Pro main
 	settings = create_struct(settings, 'root_path', root_path)
 
 	;;-----
+	;; Data processing
+	;;-----
+	IF settings.p_s99org_kp_pagb EQ 1L THEN p_s99org_kp_pagb, settings
+	IF settings.p_s99orgsn_kp_pagb EQ 1L THEN p_s99orgsn_kp_pagb, settings
+	IF settings.p_s99ts_kp_pagb EQ 1L THEN p_s99ts_kp_pagb, settings
+
+	;;-----
 	;; Main Procedures
 	;;-----
+	IF settings.p1_maketbl EQ 1L THEN p1_maketbl, settings
 
 	;;-----
 	;; Tests
 	;;-----
-	if Settings.Test1 eq 1L then test1, settings
+	IF Settings.Test1 EQ 1L THEN test1, settings
+	IF Settings.Test2 EQ 1L THEN test2, settings
 	STOP	
 
 End

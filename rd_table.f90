@@ -25,7 +25,7 @@ program rd_table
    logical::ok
 
 
-   open(unit=10,file='swind_krp_pagb.dat',status='old',form='unformatted')
+   open(unit=10,file='/storage6/jinsu/var/YOMP_NewFB/s99org_kp_pagb.dat',status='old',form='unformatted')
    read(10) nt_SW, nz_SW
 
    allocate(log_tSW  (1:nt_SW))          ! log Gyr
@@ -52,7 +52,6 @@ program rd_table
    read(10) dum1d
    log_zSW(:) = dum1d(:)
    deallocate(dum1d)
-
    allocate(dum1d (1:nt_SW))
    !  cumulative stellar mass loss
    do iz=1,nz_SW
@@ -114,6 +113,7 @@ program rd_table
       do iz=1,nz_SW
          read(10) dum1d
          log_cmFeSW(:,iz) = dum1d(:)
+         PRINT *, log_cmFeSW(100+iz,iz)
       enddo
 
       

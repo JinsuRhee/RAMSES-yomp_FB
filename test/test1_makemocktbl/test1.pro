@@ -79,6 +79,7 @@ PRO test1, settings
 
 	ENDFOR
 
+	STOP
 	;;-----
 	;; WRITE
 	;;-----
