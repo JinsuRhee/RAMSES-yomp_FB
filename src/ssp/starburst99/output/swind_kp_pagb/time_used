@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 Job on gc7 started at Thu 24 Dec 2020 08:20:09 AM UTC
  
 Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
@@ -9,11 +10,19 @@ Save synthesis-files to m45_sn/standard.*1
 Done at Thu 24 Dec 2020 08:21:09 AM UTC
 =======
 Job on gc7 started at Wed 23 Dec 2020 01:34:39 PM UTC
+=======
+Job on gc7 started at Thu 24 Dec 2020 08:20:09 AM UTC
+>>>>>>> fecffcf... test
  
 Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
-65.78user 0.59system 1:06.38elapsed 99%CPU (0avgtext+0avgdata 72936maxresident)k
-0inputs+136520outputs (0major+18078minor)pagefaults 0swaps
+59.03user 0.39system 0:59.47elapsed 99%CPU (0avgtext+0avgdata 72704maxresident)k
+46336inputs+136512outputs (0major+31939minor)pagefaults 0swaps
  
+<<<<<<< HEAD
 Save synthesis-files to m45/standard.*1
 Done at Wed 23 Dec 2020 01:35:45 PM UTC
 >>>>>>> 02036fc... src dir & sb99 codes
+=======
+Save synthesis-files to m45_sn/standard.*1
+Done at Thu 24 Dec 2020 08:21:09 AM UTC
+>>>>>>> fecffcf... test

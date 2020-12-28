@@ -14,19 +14,27 @@ set  ninput=standard.input3
 #           Name and extension number of output files:
 #           --> files will be: noutput.colornext, noutput.quantnext etc.
 <<<<<<< HEAD
+<<<<<<< HEAD
 set noutput=m43_sn/standard
 =======
 set noutput=m43/standard
 >>>>>>> 02036fc... src dir & sb99 codes
+=======
+set noutput=m43_sn/standard
+>>>>>>> fecffcf... test
 set    next=1
 #           Directory where code is:
 set   dcode=/home/jinsu/RAMSES-yomp_FB/src/ssp/starburst99/
 #          Name of code: 
 <<<<<<< HEAD
+<<<<<<< HEAD
 set   ncode=galaxy#_wonly_js
 =======
 set   ncode=galaxy_wonly_js
 >>>>>>> 02036fc... src dir & sb99 codes
+=======
+set   ncode=galaxy#_wonly_js
+>>>>>>> fecffcf... test
 #           Directory where libraries are:
 set   dlib=/home/jinsu/RAMSES-yomp_FB/src/ssp/starburst99
 #- - - - - - - DO NOT MODIFY below this line - - - - - - - - - - - - - -
