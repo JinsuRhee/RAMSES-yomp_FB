@@ -1,20 +1,50 @@
 PRO test2, settings
 
 	;;-----
-	;; LOAD DATA
+	;; READ DATA
 	;;-----
-	dir_save	= settings.dir_save
-	RESTORE, dir_save + 'swind_s99org_kp_pagb.sav'
+	RESTORE, settings.dir_save + 'swind_s99org_kp_pagb.sav'
 	js	= array
-	RESTORE, dir_save + 'swind_s99ts_kp_pagb.sav'
-	ts	= array
-	RESTORE, dir_save + 'swind_s99orgsn_kp_pagb.sav'
-	js_sn	= array
+
+	f_ts	= settings.root_path + 'data/starburst99_ts/kp_pagb/b50/swind_krp_pagb_bh50.dat'
+	ts	= rd_tableOrg(f_ts, totalmass=1.0d0)
+
 	;;-----
 	;; DRAW
 	;;-----
-	iname	= settings.root_path + 'test/test2*/comp.eps'
 
+	;;CHEMICAL SPECIES
+	cgDisplay, 800, 800
+	!p.charsize=2.2 & !p.font = -1 & !p.charthick=1.5
+	cgPlot, 0, 0, /nodata, xrange=[1e4, 1e12], yrange=[1e-9, 1e0], /xlog, /ylog, $
+		xtitle='Time [yr]', ytitle='Cumu- Frac-'
+
+	FOR i=0L, 8L DO BEGIN
+		cgOplot, js.t, js.cyield_wn(3,*,i), linestyle=0
+		cgOplot, ts.t, ts.cyield_wn(3,*,i), linestyle=0, color='red'
+	ENDFOR
+
+	;;MASS LOSS
+	cgDisplay, 800, 800
+	!p.charsize=2.2 & !p.font = -1 & !p.charthick=1.5
+	cgPlot, 0, 0, /nodata, xrange=[1e4, 1e12], yrange=[1e-6, 1e0], /xlog, /ylog, $
+		xtitle='Time [yr]', ytitle='Cumu- Frac-'
+
+		cgOplot, js.t, js.cml_wn(3,*), linestyle=0
+		cgOplot, ts.t, ts.cml_wn(*,3), linestyle=0, color='red'
+
+	;;ENERGY RELEASE
+	cgDisplay, 800, 800
+	!p.charsize=2.2 & !p.font = -1 & !p.charthick=1.5
+	cgPlot, 0, 0, /nodata, xrange=[1e4, 1e12], yrange=[40, 51], /xlog, $
+		xtitle='Time [yr]', ytitle='Mechanical Energy [erg]'
+
+		cgOplot, js.t, js.en_wn(3,*), linestyle=0
+		cgOplot, ts.t, ts.en_wn(*,3), linestyle=0, color='red'
+	STOP
+
+
+	iname	= settings.root_path + 'test/test2*/comp.eps'
 	cgPS_open, iname, /encapsulated
 	!p.charsize=2.0 & !p.font = -1 & !p.charthick=5.
 	cgDisplay, 800, 800
