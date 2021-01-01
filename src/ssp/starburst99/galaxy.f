@@ -1629,6 +1629,108 @@ c
         parameter (npgrid = 3000) 
         dimension cmass(npgrid),a(nmaxint)
         dimension dens(npgrid),aic(nmaxint)
+
+C MAKE AN IMF TABLE & USE INTERPOLATION (By JinsuRhee)
+        INTEGER js_nimf, js_i
+        PARAMETER (js_nimf = 10000)
+        REAL(KIND=8) js_min, js_max, js_dm, js_sum, js_sumando
+        REAL(KIND=8) js_s
+        REAL(KIND=8) js_mass(js_nimf), js_num(js_nimf)
+        REAL(KIND=8) js_aic(nmaxint), js_a(nmaxint)
+
+
+C GENERATE IMF TABLE
+        js_min = cmass(lmin)*0.9
+        js_max = cmass(lmax)*1.1
+        js_dm = (js_max - js_min) / (js_nimf - 1)
+        js_mass(1) = js_min
+
+        !! MASS TABLE & NORMALIZATION FACTOR
+        DO i=2, js_nimf
+          js_mass(i) = js_min + js_dm * (i-1) 
+        ENDDO 
+
+        js_aic(1) = 1.0 
+        IF(Ninterv .gt. 1) THEN
+          DO k=2, Ninterv
+            js_aic(k) = js_aic(k-1) * 
+     *          xmaslim(k)**(xponent(k) - xponent(k-1))
+          ENDDO 
+        ENDIF
+
+        js_sum = 0.0 
+
+        DO i=1, Ninterv
+          IF(xponent(i) .EQ. 2) THEN
+            js_sumando=log(xmaslim(i+1)) - log(xmaslim(i))
+          ELSE
+            js_sumando=(xmaslim(i+1)**(2.0 - xponent(i))-
+     *          xmaslim(i)**(2.0-xponent(i)))/(2.-xponent(i))
+          ENDIF
+
+          js_sum = js_sum + js_aic(i)*js_sumando
+        ENDDO
+
+        IF(isf .GT. 0) THEN
+          IF(icount.GT.1) THEN
+            toma=sfr*tstep
+          ELSE
+            toma=sfr*1.e-5
+          ENDIF
+        ENDIF
+
+        js_s = toma/js_sum
+
+        DO i=1, Ninterv
+          js_a(i)=js_aic(i) * js_s
+        ENDDO
+
+        !! COMPUTE NUMBER DENSITY
+        DO i=1, js_nimf
+          xmlow = js_mass(i) - 0.5 * js_dm
+          xmhigh= js_mass(i) + 0.5 * js_dm
+
+          DO j=1,Ninterv
+C 
+            IF(xmlow.LT.xmaslim(j).AND.
+     *        xmaslim(j).LT.xmhigh.AND.j.NE.1)THEN
+
+              IF (xponent(j-1).EQ.1.) THEN
+                js_num(i)=js_a(j-1)*(log(xmaslim(j))-log(xmlow)) +
+     *               js_a(j)/(1.-xponent(j))*
+     *               (xmhigh**(1.-xponent(j))-
+     *               xmaslim(j)**(1.-xponent(j)))
+              ELSE IF (xponent(j).EQ.1.) THEN
+                js_num(i)=js_a(j-1)/(1.-xponent(j-1))*
+     *               (xmaslim(j)**(1.-xponent(j-1))-
+     *               xmlow**(1.-xponent(j-1))) +
+     *               js_a(j)*(log(xmhigh)-log(xmaslim(j)))
+              ELSE
+                js_num(i)=js_a(j-1)/(1.-xponent(j-1))*(xmaslim(j)**
+     *               (1.-xponent(j-1))-xmlow**(1.-xponent(j-1))) +
+     *               js_a(j)/(1.-xponent(j))*(xmhigh**(1.-xponent(j))-
+     *               xmaslim(j)**(1.-xponent(j)))
+              ENDIF
+C 
+            ELSEIF (xmaslim(j).LE.xmlow.AND.xmhigh.LE.xmaslim(j+1)) THEN
+c 
+              IF (xponent(j).EQ.1.) THEN
+                js_num(i)=js_a(j)*(log(xmhigh)-log(xmlow))
+              ELSE
+                js_num(i)=js_a(j)/(1.-xponent(j))*
+     *             (xmhigh**(1.-xponent(j))-
+     *             xmlow**(1.-xponent(j)))
+              ENDIF
+c 
+            ELSEIF(xmhigh .GT. 100) THEN
+                    ! just use linear extrapolation for the high mass end
+              js_num(i) = js_num(i-1) - (js_num(i-1) - js_num(i-2))
+            ENDIF
+c
+        ENDDO
+      ENDDO
+
+
 c
 c THE TOTAL MASS IS COMPUTED FROM THE STAR FORMATION RATE IF A STAR
 c FORMATION RATE IS SPECIFIED. ELSE, THE TOTAL MASS IS SIMPLY TAKEN FROM
@@ -3960,6 +4062,7 @@ c EACH STELLAR GENERATION IS CALCULATED. THE MASS LOST DURING A
 c SN EXPLOSION IS CALCULATED FROM THE REMAINING MASS IN THE GENEVA MODELS
 c AND THE SN RATE. 
 c
+
 	if (iwind .eq.  0) goto 1000
 	if (iwind .eq.  1) goto 2000
 	if (iwind .eq.  2) goto 3000
