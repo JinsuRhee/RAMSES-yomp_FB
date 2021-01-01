@@ -1,9 +1,14 @@
 PRO test3, settings
 
-	test3_mft, settings
-
+	test3_corsn, settings
 	STOP
-	iz	= 3L
+	;test3_rmtable, settings
+
+	;STOP
+	;test3_mft, settings
+
+	;STOP
+	iz	= 4L
 	;;-----
 	;; LOAD TABLE
 	;;-----
