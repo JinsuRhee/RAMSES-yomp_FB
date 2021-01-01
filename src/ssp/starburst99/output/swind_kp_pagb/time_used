@@ -1,6 +1,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 Job on gc7 started at Thu 24 Dec 2020 08:20:09 AM UTC
 =======
 Job on gc7 started at Mon 28 Dec 2020 04:16:51 AM UTC
@@ -35,3 +36,10 @@ Done at Thu 24 Dec 2020 08:21:09 AM UTC
 Save synthesis-files to m45/standard.*1
 Done at Mon 28 Dec 2020 04:17:42 AM UTC
 >>>>>>> 1a47a62... remainings
+=======
+Job on gc7 started at Fri 01 Jan 2021 12:05:43 PM UTC
+ 
+Command terminated by signal 2
+1.09user 0.03system 0:01.12elapsed 99%CPU (0avgtext+0avgdata 13472maxresident)k
+0inputs+0outputs (0major+2725minor)pagefaults 0swaps
+>>>>>>> d1321e2... Corrected progenitor mass is added
