@@ -63,7 +63,7 @@
 ;###################################################
 ;###################################################
 ;###################################################
-pro run_all_yield_release,chabrier=chabrier,salpeter=salpeter,varying=varying,ASNIa=ASNIa,mfailed=mfailed,failed_fraction=failed_fraction,mass_separatrix=mass_separatrix,kobayashi=kobayashi
+pro run_all_yield_release,chabrier=chabrier,salpeter=salpeter,varying=varying,ASNIa=ASNIa,mfailed=mfailed,failed_fraction=failed_fraction,mass_separatrix=mass_separatrix,kobayashi=kobayashi,dir=dir, outdir=outdir
 
 IF not (keyword_set(chabrier) or keyword_set(salpeter) or keyword_set(varying)) THEN BEGIN
     PRINT, 'Wrong number of arguments'
@@ -92,40 +92,42 @@ if keyword_set(kobayashi)then begin
    nz=n_elements(zmet)
    if keyword_set(chabrier)then begin
    for j=0,nz-1L do begin
-      fileage='/home/dubois/StellarYields/PadovaStellarTracks/ages_padova_z'+zstring1(j)+'.txt'
+      fileage=dir + '/PadovaStellarTracks/ages_padova_z'+zstring1(j)+'.txt'
+      ;fileage='/home/dubois/StellarYields/PadovaStellarTracks/ages_padova_z'+zstring1(j)+'.txt'
       fileintermediate='kobayashi13agb_z'+zstring1(j)+'_simplified.txt'
       filemassive='kobayashi13snii_z'+zstring1(j)+'_simplified.txt'
       if keyword_set(mass_separatrix)then begin
          mstring='msep'+string(mass_separatrix,format='(e7.1)')+'msun'
-         fileout='yields_evol_kobayashi_z'+zstring2(j)+'_chabrier_imf0.1-100msun_'+mstring+'_asnia'+string(ASNIa,format='(e7.1)')+'_dustcpopping17.txt'
+         fileout=outdir+'yields_evol_kobayashi_z'+zstring2(j)+'_chabrier_imf0.1-100msun_'+mstring+'_asnia'+string(ASNIa,format='(e7.1)')+'_dustcpopping17.txt'
       endif else begin
-         fileout='yields_evol_kobayashi_z'+zstring2(j)+'_chabrier_imf0.1-100msun_asnia'+string(ASNIa,format='(e7.1)')+'_dustcpopping17.txt'
+         fileout=outdir+'yields_evol_kobayashi_z'+zstring2(j)+'_chabrier_imf0.1-100msun_asnia'+string(ASNIa,format='(e7.1)')+'_dustcpopping17.txt'
       endelse
       print,fileage
       print,fileintermediate
       print,filemassive
       print,fileout
       print,'======='
-      cmp_yield_release,ASNIa=ASNIa,fileout=fileout,/chabrier,bound=[0.1,100.0],zmet=zmet(j),maxage=2d10,fileage=fileage,fileintermediate=fileintermediate,filemassive=filemassive,mfailed=double(mfailed),mass_separatrix=mass_separatrix,/noplot,failed_fraction=failed_fraction
+      cmp_yield_release,ASNIa=ASNIa,fileout=fileout,/chabrier,bound=[0.1,100.0],zmet=zmet(j),maxage=2d10,fileage=fileage,fileintermediate=fileintermediate,filemassive=filemassive,mfailed=double(mfailed),mass_separatrix=mass_separatrix,/noplot,failed_fraction=failed_fraction,rootdir=dir
    endfor
    endif
    if keyword_set(salpeter)then begin
    for j=0,nz-1L do begin
-      fileage='/home/dubois/StellarYields/PadovaStellarTracks/ages_padova_z'+zstring1(j)+'.txt'
+      fileage=dir + 'PadovaStellarTracks/ages_padova_z'+zstring1(j)+'.txt'
+      ;fileage='/home/dubois/StellarYields/PadovaStellarTracks/ages_padova_z'+zstring1(j)+'.txt'
       fileintermediate='kobayashi13agb_z'+zstring1(j)+'_simplified.txt'
       filemassive='kobayashi13snii_z'+zstring1(j)+'_simplified.txt'
       if keyword_set(mass_separatrix)then begin
          mstring='msep'+string(mass_separatrix,format='(e7.1)')+'msun'
-         fileout='yields_evol_kobayashi_z'+zstring2(j)+'_salpeter_imf0.1-100msun_'+mstring+'_asnia'+string(ASNIa,format='(e7.1)')+'_dustcpopping17.txt'
+         fileout=outdir+'yields_evol_kobayashi_z'+zstring2(j)+'_salpeter_imf0.1-100msun_'+mstring+'_asnia'+string(ASNIa,format='(e7.1)')+'_dustcpopping17.txt'
       endif else begin
-         fileout='yields_evol_kobayashi_z'+zstring2(j)+'_salpeter_imf0.1-100msun_asnia'+string(ASNIa,format='(e7.1)')+'_dustcpopping17.txt'
+         fileout=outdir+'yields_evol_kobayashi_z'+zstring2(j)+'_salpeter_imf0.1-100msun_asnia'+string(ASNIa,format='(e7.1)')+'_dustcpopping17.txt'
       endelse
       print,fileage
       print,fileintermediate
       print,filemassive
       print,fileout
       print,'======='
-      cmp_yield_release,ASNIa=ASNIa,fileout=fileout,/salpeter,alpha=[-2.3],bound=[0.1,100.0],zmet=zmet(j),maxage=2d10,fileage=fileage,fileintermediate=fileintermediate,filemassive=filemassive,mfailed=double(mfailed),mass_separatrix=mass_separatrix,/noplot,failed_fraction=failed_fraction
+      cmp_yield_release,ASNIa=ASNIa,fileout=fileout,/salpeter,alpha=[-2.3],bound=[0.1,100.0],zmet=zmet(j),maxage=2d10,fileage=fileage,fileintermediate=fileintermediate,filemassive=filemassive,mfailed=double(mfailed),mass_separatrix=mass_separatrix,/noplot,failed_fraction=failed_fraction,rootdir=dir
    endfor
    endif
    if keyword_set(varying)then begin
@@ -135,21 +137,22 @@ if keyword_set(kobayashi)then begin
       alpha_slope=[-aa0,-aa]
       print,zmet(j),alpha_slope,format='(3f10.2)'
       nbound_slope=n_elements(bound_slope)
-      fileage='/home/dubois/StellarYields/PadovaStellarTracks/ages_padova_z'+zstring1(j)+'.txt'
+      fileage=dir+'PadovaStellarTracks/ages_padova_z'+zstring1(j)+'.txt'
+      ;fileage='/home/dubois/StellarYields/PadovaStellarTracks/ages_padova_z'+zstring1(j)+'.txt'
       fileintermediate='kobayashi13agb_z'+zstring1(j)+'_simplified.txt'
       filemassive='kobayashi13snii_z'+zstring1(j)+'_simplified.txt'
       if keyword_set(mass_separatrix)then begin
          mstring='msep'+string(mass_separatrix,format='(e7.1)')+'msun'
-         fileout='yields_evol_kobayashi_z'+zstring2(j)+'_varying_imf0.1-100msun_'+mstring+'_asnia'+string(ASNIa,format='(e7.1)')+'_dustcpopping17.txt'
+         fileout=outdir+'yields_evol_kobayashi_z'+zstring2(j)+'_varying_imf0.1-100msun_'+mstring+'_asnia'+string(ASNIa,format='(e7.1)')+'_dustcpopping17.txt'
       endif else begin
-         fileout='yields_evol_kobayashi_z'+zstring2(j)+'_varying_imf0.1-100msun_asnia'+string(ASNIa,format='(e7.1)')+'_dustcpopping17.txt'
+         fileout=outdir+'yields_evol_kobayashi_z'+zstring2(j)+'_varying_imf0.1-100msun_asnia'+string(ASNIa,format='(e7.1)')+'_dustcpopping17.txt'
       endelse
       print,fileage
       print,fileintermediate
       print,filemassive
       print,fileout
       print,'======='
-      cmp_yield_release,ASNIa=ASNIa,fileout=fileout,/varying,alpha=alpha_slope,bound=[0.1,0.6,100.0],zmet=zmet(j),maxage=2d10,fileage=fileage,fileintermediate=fileintermediate,filemassive=filemassive,mfailed=double(mfailed),mass_separatrix=mass_separatrix,/noplot,failed_fraction=failed_fraction
+      cmp_yield_release,ASNIa=ASNIa,fileout=fileout,/varying,alpha=alpha_slope,bound=[0.1,0.6,100.0],zmet=zmet(j),maxage=2d10,fileage=fileage,fileintermediate=fileintermediate,filemassive=filemassive,mfailed=double(mfailed),mass_separatrix=mass_separatrix,/noplot,failed_fraction=failed_fraction,rootdir=dir
    endfor
    endif
 endif else begin
@@ -163,14 +166,14 @@ for i=0,nvel-1L do begin
       filemassive  ='limongichieffi_modelm_z'+zstring(j)+'_vel'+strcompress(vel(i),/remove_all)+'_simplified.txt'
       if keyword_set(mass_separatrix)then begin
          mstring='msep'+string(mass_separatrix,format='(e7.1)')+'msun'
-         fileout='yields_evol_z'+zstring(j)+'_v'+vstring+'_chabrier_imf0.1-100msun_'+mstring+'_mfailed'+strcompress(mfailed,/remove_all)+'msun_ffailed'+string(failed_fraction,format='(f4.2)')+'_asnia'+string(ASNIa,format='(e7.1)')+'_dustcpopping17.txt'
+         fileout=outdir+'yields_evol_z'+zstring(j)+'_v'+vstring+'_chabrier_imf0.1-100msun_'+mstring+'_mfailed'+strcompress(mfailed,/remove_all)+'msun_ffailed'+string(failed_fraction,format='(f4.2)')+'_asnia'+string(ASNIa,format='(e7.1)')+'_dustcpopping17.txt'
       endif else begin
-         fileout='yields_evol_z'+zstring(j)+'_v'+vstring+'_chabrier_imf0.1-100msun_mfailed'+strcompress(mfailed,/remove_all)+'msun_ffailed'+string(failed_fraction,format='(f4.2)')+'_asnia'+string(ASNIa,format='(e7.1)')+'_dustcpopping17.txt'
+         fileout=outdir+'yields_evol_z'+zstring(j)+'_v'+vstring+'_chabrier_imf0.1-100msun_mfailed'+strcompress(mfailed,/remove_all)+'msun_ffailed'+string(failed_fraction,format='(f4.2)')+'_asnia'+string(ASNIa,format='(e7.1)')+'_dustcpopping17.txt'
       endelse
       print,filemassive
       print,filesecondary
       print,fileout
-      cmp_yield_release,ASNIa=ASNIa,fileout=fileout,/chabrier,bound=[0.1,100.0],v=vel(i),zmet=zmet(j),maxage=2d10,filemassive=filemassive,filesecondary=filesecondary,mfailed=double(mfailed),mass_separatrix=mass_separatrix,/noplot,failed_fraction=failed_fraction
+      cmp_yield_release,ASNIa=ASNIa,fileout=fileout,/chabrier,bound=[0.1,100.0],v=vel(i),zmet=zmet(j),maxage=2d10,filemassive=filemassive,filesecondary=filesecondary,mfailed=double(mfailed),mass_separatrix=mass_separatrix,/noplot,failed_fraction=failed_fraction,rootdir=dir
    endfor
 endfor
 endif
@@ -182,11 +185,11 @@ for i=0,nvel-1L do begin
       vstring=strcompress(vel(i),/remove_all)
       filesecondary='limongichieffi_z'+zstring(j)+'_vel'+strcompress(vel(i),/remove_all)+'_simplified.txt'
       filemassive  ='limongichieffi_modelm_z'+zstring(j)+'_vel'+strcompress(vel(i),/remove_all)+'_simplified.txt'
-      fileout='yields_evol_z'+zstring(j)+'_v'+vstring+'_salpeter_imf0.1-100msun_mfailed'+strcompress(mfailed,/remove_all)+'msun_asnia'+string(ASNIa,format='(e7.1)')+'_dustcpopping17.txt'
+      fileout=outdir+'yields_evol_z'+zstring(j)+'_v'+vstring+'_salpeter_imf0.1-100msun_mfailed'+strcompress(mfailed,/remove_all)+'msun_asnia'+string(ASNIa,format='(e7.1)')+'_dustcpopping17.txt'
       print,filemassive
       print,filesecondary
       print,fileout
-      cmp_yield_release,ASNIa=ASNIa,fileout=fileout,alpha=[-2.3],bound=[0.1,100.0],v=vel(i),zmet=zmet(j),maxage=2d10,filemassive=filemassive,filesecondary=filesecondary,mfailed=double(mfailed),/noplot
+      cmp_yield_release,ASNIa=ASNIa,fileout=fileout,alpha=[-2.3],bound=[0.1,100.0],v=vel(i),zmet=zmet(j),maxage=2d10,filemassive=filemassive,filesecondary=filesecondary,mfailed=double(mfailed),/noplot,rootdir=dir
    endfor
 endfor
 endif
@@ -204,11 +207,11 @@ for i=0,nvel-1L do begin
       vstring=strcompress(vel(i),/remove_all)
       filesecondary='limongichieffi_z'+zstring(j)+'_vel'+strcompress(vel(i),/remove_all)+'_simplified.txt'
       filemassive  ='limongichieffi_modelm_z'+zstring(j)+'_vel'+strcompress(vel(i),/remove_all)+'_simplified.txt'
-      fileout='yields_evol_z'+zstring(j)+'_v'+vstring+'_varying_imf0.1-100msun_mfailed'+strcompress(mfailed,/remove_all)+'msun_asnia'+string(ASNIa,format='(e7.1)')+'_dustcpopping17.txt'
+      fileout=outdir+'yields_evol_z'+zstring(j)+'_v'+vstring+'_varying_imf0.1-100msun_mfailed'+strcompress(mfailed,/remove_all)+'msun_asnia'+string(ASNIa,format='(e7.1)')+'_dustcpopping17.txt'
       print,filemassive
       print,filesecondary
       print,fileout
-      cmp_yield_release,ASNIa=ASNIa,fileout=fileout,alpha=alpha_slope,bound=[0.1,0.6,100.0],v=vel(i),zmet=zmet(j),maxage=2d10,filemassive=filemassive,filesecondary=filesecondary,mfailed=double(mfailed),/noplot
+      cmp_yield_release,ASNIa=ASNIa,fileout=fileout,alpha=alpha_slope,bound=[0.1,0.6,100.0],v=vel(i),zmet=zmet(j),maxage=2d10,filemassive=filemassive,filesecondary=filesecondary,mfailed=double(mfailed),/noplot,rootdir=dir
    endfor
 endfor
 endif

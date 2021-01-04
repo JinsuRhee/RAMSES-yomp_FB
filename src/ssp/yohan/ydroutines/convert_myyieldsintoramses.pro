@@ -1,6 +1,7 @@
-pro convert_myyieldsintoramses,vel=vel,ASNIa=ASNIa,printps=printps,fileeps=fileeps,files=files,zmet=zmet,fileout=fileout
+pro convert_myyieldsintoramses,vel=vel,ASNIa=ASNIa,printps=printps,fileeps=fileeps,files=files,zmet=zmet,fileout=fileout, dir=dir
 
-dir='/home/dubois/StellarYields/ResultingYields/'
+dir=dir + '/ResultingYields/'
+;dir='/home/dubois/StellarYields/ResultingYields/'
 if not keyword_set(files)then begin
 print,'Using vel:',vel
 if(vel eq 0.)then begin

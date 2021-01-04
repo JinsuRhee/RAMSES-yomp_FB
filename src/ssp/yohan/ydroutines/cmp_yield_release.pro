@@ -419,44 +419,44 @@ if not keyword_set(vel)then vel=0
 vel=strcompress(vel,/remove_all)
 if keyword_set(zmet)then begin
    if(zmet eq 0.3)then begin
-      if not keyword_set(fileage         )then fileage         =rootdir+'/StellarYields/PadovaStellarTracks/ages_padova_z0.0269.txt'
-      if not keyword_set(fileintermediate)then fileintermediate=rootdir+'/StellarYields/karakas_z0.02_simplified.txt'
-      if not keyword_set(filemassive     )then filemassive     =rootdir+'/StellarYields/limongichieffi_z0_vel'+vel+'_simplified.txt'
+      if not keyword_set(fileage         )then fileage         =rootdir+'/PadovaStellarTracks/ages_padova_z0.0269.txt'
+      if not keyword_set(fileintermediate)then fileintermediate=rootdir+'/karakas_z0.02_simplified.txt'
+      if not keyword_set(filemassive     )then filemassive     =rootdir+'/limongichieffi_z0_vel'+vel+'_simplified.txt'
    endif
    if(zmet eq 0.0)then begin
-      if not keyword_set(fileage         )then fileage         =rootdir+'/StellarYields/PadovaStellarTracks/ages_padova_z0.01345.txt'
-      if not keyword_set(fileintermediate)then fileintermediate=rootdir+'/StellarYields/karakas_z0.01345_simplified.txt'
-      if not keyword_set(filemassive     )then filemassive     =rootdir+'/StellarYields/limongichieffi_z0_vel'+vel+'_simplified.txt'
+      if not keyword_set(fileage         )then fileage         =rootdir+'/PadovaStellarTracks/ages_padova_z0.01345.txt'
+      if not keyword_set(fileintermediate)then fileintermediate=rootdir+'/karakas_z0.01345_simplified.txt'
+      if not keyword_set(filemassive     )then filemassive     =rootdir+'/limongichieffi_z0_vel'+vel+'_simplified.txt'
    endif
    if(zmet eq -0.3)then begin
-      if not keyword_set(fileage         )then fileage         =rootdir+'/StellarYields/PadovaStellarTracks/ages_padova_z0.006725.txt'
-      if not keyword_set(fileintermediate)then fileintermediate=rootdir+'/StellarYields/karakas_z0.006725_simplified.txt'
-      if not keyword_set(filemassive     )then filemassive     =rootdir+'/StellarYields/limongichieffi_z-0.3_vel'+vel+'_simplified.txt'
+      if not keyword_set(fileage         )then fileage         =rootdir+'/PadovaStellarTracks/ages_padova_z0.006725.txt'
+      if not keyword_set(fileintermediate)then fileintermediate=rootdir+'/karakas_z0.006725_simplified.txt'
+      if not keyword_set(filemassive     )then filemassive     =rootdir+'/limongichieffi_z-0.3_vel'+vel+'_simplified.txt'
    endif
    if(zmet eq -0.6)then begin
-      if not keyword_set(fileage         )then fileage         =rootdir+'/StellarYields/PadovaStellarTracks/ages_padova_z0.003362.txt'
-      if not keyword_set(fileintermediate)then fileintermediate=rootdir+'/StellarYields/karakas_z0.003362_simplified.txt'
-      if not keyword_set(filemassive     )then filemassive     =rootdir+'/StellarYields/limongichieffi_z-0.6_vel'+vel+'_simplified.txt'
+      if not keyword_set(fileage         )then fileage         =rootdir+'/PadovaStellarTracks/ages_padova_z0.003362.txt'
+      if not keyword_set(fileintermediate)then fileintermediate=rootdir+'/karakas_z0.003362_simplified.txt'
+      if not keyword_set(filemassive     )then filemassive     =rootdir+'/limongichieffi_z-0.6_vel'+vel+'_simplified.txt'
    endif
    if(zmet eq -1.)then begin
-      if not keyword_set(fileage         )then fileage         =rootdir+'/StellarYields/PadovaStellarTracks/ages_padova_z0.001345.txt'
-      if not keyword_set(fileintermediate)then fileintermediate=rootdir+'/StellarYields/karakas_z0.001345_simplified.txt'
-      if not keyword_set(filemassive     )then filemassive     =rootdir+'/StellarYields/limongichieffi_z-1_vel'+vel+'_simplified.txt'
+      if not keyword_set(fileage         )then fileage         =rootdir+'/PadovaStellarTracks/ages_padova_z0.001345.txt'
+      if not keyword_set(fileintermediate)then fileintermediate=rootdir+'/karakas_z0.001345_simplified.txt'
+      if not keyword_set(filemassive     )then filemassive     =rootdir+'/limongichieffi_z-1_vel'+vel+'_simplified.txt'
    endif
    if(zmet eq -2.)then begin
-      if not keyword_set(fileage         )then fileage         =rootdir+'/StellarYields/PadovaStellarTracks/ages_padova_z0.0001345.txt'
-      if not keyword_set(fileintermediate)then fileintermediate=rootdir+'/StellarYields/karakas_z0.0001345_simplified.txt'
-      if not keyword_set(filemassive     )then filemassive     =rootdir+'/StellarYields/limongichieffi_z-2_vel'+vel+'_simplified.txt'
+      if not keyword_set(fileage         )then fileage         =rootdir+'/PadovaStellarTracks/ages_padova_z0.0001345.txt'
+      if not keyword_set(fileintermediate)then fileintermediate=rootdir+'/karakas_z0.0001345_simplified.txt'
+      if not keyword_set(filemassive     )then filemassive     =rootdir+'/limongichieffi_z-2_vel'+vel+'_simplified.txt'
    endif
    if(zmet eq -3.)then begin
-      if not keyword_set(fileage         )then fileage         =rootdir+'/StellarYields/PadovaStellarTracks/ages_padova_z0.00001345.txt'
-      if not keyword_set(fileintermediate)then fileintermediate=rootdir+'/StellarYields/karakas_z0.00001345_simplified.txt'
-      if not keyword_set(filemassive     )then filemassive     =rootdir+'/StellarYields/limongichieffi_z-3_vel'+vel+'_simplified.txt'
+      if not keyword_set(fileage         )then fileage         =rootdir+'/PadovaStellarTracks/ages_padova_z0.00001345.txt'
+      if not keyword_set(fileintermediate)then fileintermediate=rootdir+'/karakas_z0.00001345_simplified.txt'
+      if not keyword_set(filemassive     )then filemassive     =rootdir+'/limongichieffi_z-3_vel'+vel+'_simplified.txt'
    endif
 endif else begin
-   if not keyword_set(fileage         )then fileage         =rootdir+'/StellarYields/PadovaStellarTracks/ages_padova_z0.01345.txt'
-   if not keyword_set(fileintermediate)then fileintermediate=rootdir+'/StellarYields/karakas_z0.01345_simplified.txt'
-   if not keyword_set(filemassive     )then filemassive     =rootdir+'/StellarYields/limongichieffi_z0_vel'+vel+'_simplified.txt'
+   if not keyword_set(fileage         )then fileage         =rootdir+'/PadovaStellarTracks/ages_padova_z0.01345.txt'
+   if not keyword_set(fileintermediate)then fileintermediate=rootdir+'/karakas_z0.01345_simplified.txt'
+   if not keyword_set(filemassive     )then filemassive     =rootdir+'/limongichieffi_z0_vel'+vel+'_simplified.txt'
 endelse
 
 readcol,fileage,mzas_fromage,logage,/silent
