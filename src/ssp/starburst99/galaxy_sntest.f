@@ -4180,8 +4180,8 @@ c     * lstart, lend, lstep
 c%123123
 c
 c        yrmn = -1.0
-	yield2=yield2 + (zmass(l)-1.4)*sn(l)
-c        yield2=yield2 + (zmass(l)-yrmn)*sn(l)
+c	yield2=yield2 + (zmass(l)-1.4)*sn(l)
+        yield2=yield2 + (cmass(l)-yrmn)*sn(l)
 c
 c CHEMICAL YIELDS FROM SNII ARE UPDATED
 c

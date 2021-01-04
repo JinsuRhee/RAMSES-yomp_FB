@@ -4,6 +4,7 @@
 #------------------------------------------------------
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 SOURCES = galaxy.f#_wonly_js.f
 =======
 SOURCES = galaxy_wonly_js.f
@@ -11,6 +12,9 @@ SOURCES = galaxy_wonly_js.f
 =======
 SOURCES = galaxy.f#_wonly_js.f
 >>>>>>> fecffcf... test
+=======
+SOURCES = galaxy_sntest.f#_wonly_js.f
+>>>>>>> d4d10c6... sntest
 
 OBJECTS = $(SOURCES:.f=.o)
 
@@ -38,6 +42,7 @@ LINK   = gfortran
 galaxy: $(OBJECTS) Makefile
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	$(LINK) $(LFLAGS) $(OBJECTS) -o galaxy $(LIBS)
 =======
 	$(LINK) $(LFLAGS) $(OBJECTS) -o galaxy_wonly_js $(LIBS)
@@ -45,5 +50,8 @@ galaxy: $(OBJECTS) Makefile
 =======
 	$(LINK) $(LFLAGS) $(OBJECTS) -o galaxy $(LIBS)
 >>>>>>> fecffcf... test
+=======
+	$(LINK) $(LFLAGS) $(OBJECTS) -o galaxy_sntest $(LIBS)
+>>>>>>> d4d10c6... sntest
 
 $(OBJECTS): $(INCLUDES)

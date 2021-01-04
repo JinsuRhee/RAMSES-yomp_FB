@@ -83,7 +83,7 @@ PRO p_s99org_kp_pagb, settings
 
 		en_wn(i,*)	= e1
 	ENDFOR
-	STOP
+
 	yield_wn	= 10.d^yield_wn
 	yield_sn	= 10.d^yield_sn
 	ml_wn		= 10.d^ml_wn
@@ -125,11 +125,15 @@ PRO p_s99org_kp_pagb, settings
 	cml_wn		= cml_wn / 1.0d4
 	cml_sn		= cml_sn / 1.0d4
 	en_wn		= en_wn - 4.0d
-
+	yield_wn	= yield_wn / 1.0d4
+	yield_sn	= yield_sn / 1.0d4
+	ml_wn		= ml_wn /1.0d4
+	ml_sn		= ml_sn / 1.0d4
 
 
 	array	= {T:time, Z:metal, cyield_wn:cyield_wn, cyield_sn:cyield_sn, $
 		cml_wn:cml_wn, cml_sn:cml_sn, $
+		yield_wn:yield_wn, yield_sn:yield_sn, ml_wn:ml_wn, ml_sn:ml_sn, $
 		en_wn:en_wn}
 
 	SAVE, filename=settings.dir_save + 'swind_s99org_kp_pagb.sav', array
