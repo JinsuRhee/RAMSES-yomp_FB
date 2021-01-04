@@ -36,7 +36,7 @@ PRO p1_maketbl, settings
 	FOR i=0L, nz_SW - 1L DO WRITEU, 10, log_cmSW(i,*)
 
 	;;CUMULATIVE MECHANICAL ENERGY BY STELLAR WIND
-	log_ceSW= DOUBLE(ALOG10(array.en_wn))
+	log_ceSW= DOUBLE(array.en_wn)
 	FOR i=0L, nz_SW - 1L DO WRITEU, 10, log_ceSW(i,*)
 
 	;;CUMULATIVE METAL MASS FROM WINDS
@@ -44,7 +44,7 @@ PRO p1_maketbl, settings
 		log_cmzSW	= DOUBLE(array.cyield_wn(i,*,*))
 		log_cmzSW	= REFORM(log_cmzSW, nt_SW, nchem)
 		log_cmzSW	= log_cmzSW(*,2:*)
-		log_cmzSW	= TOTAL(log_cmzSW,2)
+		log_cmzSW	= ALOG10(TOTAL(log_cmzSW,2))
 		WRITEU, 10, log_cmzSW
 	ENDFOR
 
