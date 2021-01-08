@@ -1634,9 +1634,9 @@ C MAKE AN IMF TABLE & USE INTERPOLATION (By JinsuRhee)
         INTEGER js_nimf, js_i
         PARAMETER (js_nimf = 10000)
         REAL(KIND=8) js_min, js_max, js_dm, js_sum, js_sumando
-        REAL(KIND=8) js_s
+        REAL(KIND=8) js_s, js_k0, js_k1, js_k2
         REAL(KIND=8) js_mass(js_nimf), js_num(js_nimf)
-        REAL(KIND=8) js_aic(nmaxint), js_a(nmaxint)
+        REAL(KIND=8) js_dm2, js_num2(npgrid)
 
 
 C GENERATE IMF TABLE
@@ -1650,85 +1650,72 @@ C GENERATE IMF TABLE
           js_mass(i) = js_min + js_dm * (i-1) 
         ENDDO 
 
-        js_aic(1) = 1.0 
-        IF(Ninterv .gt. 1) THEN
-          DO k=2, Ninterv
-            js_aic(k) = js_aic(k-1) * 
-     *          xmaslim(k)**(xponent(k) - xponent(k-1))
-          ENDDO 
-        ENDIF
-
-        js_sum = 0.0 
-
-        DO i=1, Ninterv
-          IF(xponent(i) .EQ. 2) THEN
-            js_sumando=log(xmaslim(i+1)) - log(xmaslim(i))
-          ELSE
-            js_sumando=(xmaslim(i+1)**(2.0 - xponent(i))-
-     *          xmaslim(i)**(2.0-xponent(i)))/(2.-xponent(i))
-          ENDIF
-
-          js_sum = js_sum + js_aic(i)*js_sumando
-        ENDDO
-
-        IF(isf .GT. 0) THEN
-          IF(icount.GT.1) THEN
-            toma=sfr*tstep
-          ELSE
-            toma=sfr*1.e-5
-          ENDIF
-        ENDIF
-
-        js_s = toma/js_sum
-
-        DO i=1, Ninterv
-          js_a(i)=js_aic(i) * js_s
-        ENDDO
-
-        !! COMPUTE NUMBER DENSITY
-        DO i=1, js_nimf
-          xmlow = js_mass(i) - 0.5 * js_dm
-          xmhigh= js_mass(i) + 0.5 * js_dm
-
-          DO j=1,Ninterv
-C 
-            IF(xmlow.LT.xmaslim(j).AND.
-     *        xmaslim(j).LT.xmhigh.AND.j.NE.1)THEN
-
-              IF (xponent(j-1).EQ.1.) THEN
-                js_num(i)=js_a(j-1)*(log(xmaslim(j))-log(xmlow)) +
-     *               js_a(j)/(1.-xponent(j))*
-     *               (xmhigh**(1.-xponent(j))-
-     *               xmaslim(j)**(1.-xponent(j)))
-              ELSE IF (xponent(j).EQ.1.) THEN
-                js_num(i)=js_a(j-1)/(1.-xponent(j-1))*
-     *               (xmaslim(j)**(1.-xponent(j-1))-
-     *               xmlow**(1.-xponent(j-1))) +
-     *               js_a(j)*(log(xmhigh)-log(xmaslim(j)))
-              ELSE
-                js_num(i)=js_a(j-1)/(1.-xponent(j-1))*(xmaslim(j)**
-     *               (1.-xponent(j-1))-xmlow**(1.-xponent(j-1))) +
-     *               js_a(j)/(1.-xponent(j))*(xmhigh**(1.-xponent(j))-
-     *               xmaslim(j)**(1.-xponent(j)))
-              ENDIF
-C 
-            ELSEIF (xmaslim(j).LE.xmlow.AND.xmhigh.LE.xmaslim(j+1)) THEN
-c 
-              IF (xponent(j).EQ.1.) THEN
-                js_num(i)=js_a(j)*(log(xmhigh)-log(xmlow))
-              ELSE
-                js_num(i)=js_a(j)/(1.-xponent(j))*
-     *             (xmhigh**(1.-xponent(j))-
-     *             xmlow**(1.-xponent(j)))
-              ENDIF
-c 
-            ELSEIF(xmhigh .GT. 100) THEN
-                    ! just use linear extrapolation for the high mass end
-              js_num(i) = js_num(i-1) - (js_num(i-1) - js_num(i-2))
-            ENDIF
+c        !! Kroupa IMF
+c        js_k0 = 1.0; js_k1 = 0.08; js_k2 = js_k1 * 0.5
+c        DO i=1, js_nimf
+c          IF(js_mass(i) .LT. 0.08) 
+c     *      js_num(i) = js_k0*js_mass(i)**(-0.3)
+c          IF(js_mass(i) .GE. 0.08 .AND. js_mass(i) .LT. 0.5)
+c     *      js_num(i) = js_k1*js_mass(i)**(-1.3)
+c          IF(js_mass(i) .GE. 0.5)
+c     *      js_num(i) = js_k2*js_mass(i)**(-2.3)
+c        ENDDO
 c
+c        !! Chabrier+03
+c
+c        js_k0 = 0.158*1.0/DLOG(1d1)*
+c     *    DEXP(-(DLOG10(8d-2))**2/(2.0*0.69**2))
+c        DO i=1, js_nimf
+c          IF(js_mass(i) .LT. 1.0)
+c     *      js_num(i) = 0.158 * 1.0 / (DLOG(1d1)*js_mass(i)) *
+c     *        DEXP(-(DLOG10(js_mass(i)) - DLOG10(8d-2))**2 / 
+c     *        (2.0*0.69**2))
+c
+c          IF(js_mass(i) .GE. 1.0)
+c     *      js_num(i) = js_k0 * js_mass(i)**(-2.3)
+c        ENDDO
+
+        !! Chabrier+05
+        js_k0 = 0.041 / DLOG(1d1)
+        DO i=1, js_nimf
+          IF(js_mass(i) .LT. 1.0)
+     *      js_num(i) = 0.093 / (DLOG(1d1)*js_mass(i)) *
+     *      DEXP(-(DLOG10(js_mass(i)) - DLOG10(2d-1))**2 /
+     *      (2.0*0.55**2))
+
+          IF(js_mass(i) .GE. 1.0)
+     *      js_num(i) = js_k0 * js_mass(i)**(-2.3)
         ENDDO
-      ENDDO
+
+        !! NORMALIZATION
+        js_sum = 0.0
+        DO i=1, js_nimf
+          js_sum = js_sum + js_num(i)*js_mass(i)
+        ENDDO
+        
+        DO i=1, js_nimf
+          js_num(i) = js_num(i) / js_sum * toma
+        ENDDO
+
+        !! INTERPOLATION
+        DO i=lmax, lmin, -1
+          IF(i .EQ. lmin) THEN
+            js_dm2 = (cmass(i+1) + cmass(i))*0.5 - cmass(i)
+          ELSEIF(i .EQ. lmax) THEN
+            js_dm2 = cmass(i) - (cmass(i) + cmass(i-1))*0.5
+          ELSE
+            js_dm2 = (cmass(i+1) - cmass(i-1))*0.5
+          ENDIF
+
+          js_ind = (cmass(i) - js_min)/js_dm + 1
+          IF(js_ind .LE. 0) js_ind = 1
+          IF(js_ind .GT. js_nimf) js_ind = js_nimf - 1
+
+          dens(i) = (js_num(js_ind+1) - js_num(js_ind)) / js_dm *
+     *      (cmass(i) - js_mass(js_ind)) + js_num(js_ind)
+
+          dens(i) = dens(i) * js_dm2/js_dm
+        ENDDO
 
 
 c
@@ -1867,40 +1854,43 @@ c
 c THE STAR NUMBER (OR DENSITY) FOR ANY POWER LAW IMF IS 
 c CALCULATED HERE. THIS PART WAS UPDATED BY JUN YIN (SHANGHAI).
 c
-	do j=1,Ninterv
-C 
-         if(xmlow.lt.xmaslim(j).and.xmaslim(j).lt.xmhigh.and.j.ne.1)then
- 
-          if (xponent(j-1).eq.1.) then
-           dens(i)=a(j-1)*(log(xmaslim(j))-log(xmlow)) + 
-     *             a(j)/(1.-xponent(j))*
-     *             (xmhigh**(1.-xponent(j))-
-     *             xmaslim(j)**(1.-xponent(j)))
-          else if (xponent(j).eq.1.) then
-           dens(i)=a(j-1)/(1.-xponent(j-1))*(xmaslim(j)**(1.-xponent(j
-     *             -1))-xmlow**(1.-xponent(j-1))) + 
-     *             a(j)*(log(xmhigh)-log(xmaslim(j))) 
-          else 
-           dens(i)=a(j-1)/(1.-xponent(j-1))*(xmaslim(j)**
-     *             (1.-xponent(j-1))-xmlow**(1.-xponent(j-1))) + 
-     *             a(j)/(1.-xponent(j))*(xmhigh**(1.-xponent(j))-
-     *             xmaslim(j)**(1.-xponent(j)))  
-         endif   
+c	do j=1,Ninterv
+cC 
+c         if(xmlow.lt.xmaslim(j).and.xmaslim(j).lt.xmhigh.and.j.ne.1)then
 c 
-        elseif (xmaslim(j).le.xmlow.and.xmhigh.le.xmaslim(j+1)) then
-c 
-         if (xponent(j).eq.1.) then
-           dens(i)=a(j)*(log(xmhigh)-log(xmlow))
-         else 
-           dens(i)=a(j)/(1.-xponent(j))*(xmhigh**(1.-xponent(j))-
-     *             xmlow**(1.-xponent(j))) 
-         endif
-c 
-        endif
-c 
-        enddo
-c
+c          if (xponent(j-1).eq.1.) then
+c           dens(i)=a(j-1)*(log(xmaslim(j))-log(xmlow)) + 
+c     *             a(j)/(1.-xponent(j))*
+c     *             (xmhigh**(1.-xponent(j))-
+c     *             xmaslim(j)**(1.-xponent(j)))
+c          else if (xponent(j).eq.1.) then
+c           dens(i)=a(j-1)/(1.-xponent(j-1))*(xmaslim(j)**(1.-xponent(j
+c     *             -1))-xmlow**(1.-xponent(j-1))) + 
+c     *             a(j)*(log(xmhigh)-log(xmaslim(j))) 
+c          else 
+c           dens(i)=a(j-1)/(1.-xponent(j-1))*(xmaslim(j)**
+c     *             (1.-xponent(j-1))-xmlow**(1.-xponent(j-1))) + 
+c     *             a(j)/(1.-xponent(j))*(xmhigh**(1.-xponent(j))-
+c     *             xmaslim(j)**(1.-xponent(j)))  
+c         endif   
+cc 
+c        elseif (xmaslim(j).le.xmlow.and.xmhigh.le.xmaslim(j+1)) then
+cc 
+c         if (xponent(j).eq.1.) then
+c           dens(i)=a(j)*(log(xmhigh)-log(xmlow))
+c         else 
+c           dens(i)=a(j)/(1.-xponent(j))*(xmhigh**(1.-xponent(j))-
+c     *             xmlow**(1.-xponent(j))) 
+c         endif
+cc 
+c        endif
+cc 
+c        enddo
+
 3	continue
+
+c
+ 
 c
 c THE TOTAL NUMBER OF STARS FORMED IN ALL MASS INTERVALS IS COMPUTED  
 c
