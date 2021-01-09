@@ -5,6 +5,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 SOURCES = galaxy.f#_wonly_js.f
 =======
 SOURCES = galaxy_wonly_js.f
@@ -15,6 +16,9 @@ SOURCES = galaxy.f#_wonly_js.f
 =======
 SOURCES = galaxy_sntest.f#_wonly_js.f
 >>>>>>> d4d10c6... sntest
+=======
+SOURCES = galaxy.f#_wonly_js.f
+>>>>>>> 9a71537... starburst99 code updated to cover chabrier IMF and SN mass correction
 
 OBJECTS = $(SOURCES:.f=.o)
 
@@ -43,6 +47,7 @@ galaxy: $(OBJECTS) Makefile
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	$(LINK) $(LFLAGS) $(OBJECTS) -o galaxy $(LIBS)
 =======
 	$(LINK) $(LFLAGS) $(OBJECTS) -o galaxy_wonly_js $(LIBS)
@@ -53,5 +58,8 @@ galaxy: $(OBJECTS) Makefile
 =======
 	$(LINK) $(LFLAGS) $(OBJECTS) -o galaxy_sntest $(LIBS)
 >>>>>>> d4d10c6... sntest
+=======
+	$(LINK) $(LFLAGS) $(OBJECTS) -o galaxy $(LIBS)
+>>>>>>> 9a71537... starburst99 code updated to cover chabrier IMF and SN mass correction
 
 $(OBJECTS): $(INCLUDES)

@@ -1650,7 +1650,7 @@ C GENERATE IMF TABLE
           js_mass(i) = js_min + js_dm * (i-1) 
         ENDDO 
 
-c        !! Kroupa IMF
+        !! Kroupa IMF
 c        js_k0 = 1.0; js_k1 = 0.08; js_k2 = js_k1 * 0.5
 c        DO i=1, js_nimf
 c          IF(js_mass(i) .LT. 0.08) 
@@ -1660,9 +1660,9 @@ c     *      js_num(i) = js_k1*js_mass(i)**(-1.3)
 c          IF(js_mass(i) .GE. 0.5)
 c     *      js_num(i) = js_k2*js_mass(i)**(-2.3)
 c        ENDDO
-c
-c        !! Chabrier+03
-c
+
+        !! Chabrier+03
+
 c        js_k0 = 0.158*1.0/DLOG(1d1)*
 c     *    DEXP(-(DLOG10(8d-2))**2/(2.0*0.69**2))
 c        DO i=1, js_nimf
@@ -3831,7 +3831,7 @@ c
 	write(95,500)time_in,
      *               wpow,wpow1,wpow2,wpow3,wpow4,wen,
      *               wmom,wmom1,wmom2,wmom3,wmom4
-500     format(1x,e10.5,3x,5f9.3,3x,f9.3,3x,5f9.3)
+500     format(1x,e10.5,3x,5f14.8,3x,f14.8,3x,5f14.8)
 c
 c      	   write(950,600)
 c600 	   format('  <datarow>')
@@ -3927,7 +3927,7 @@ c
      *          yo(5,12),ymg(5,12),ysi(5,12),ys(5,12),yfe(5,12),
      *          tt_star(npgrid)
 	data xmg,xsi,xs,xfe /6.67e-4,6.98e-4,3.64e-4,1.83e-3/
-        REAL(KIND=8) yrmn
+        REAL(KIND=8) yrmn, yield_cor
 c
 c AT THE FIRST TIME STEP A HEADER FOR THE OUTPUT FILE IS GENERATED.
 c
@@ -4143,8 +4143,8 @@ c
           enddo
 
 c
-c	yield2=yield2 + (zmass(l)-1.4)*sn(l)
-        yield2=yield2 + (zmass(l)-yrmn)*sn(l)
+	yield2=yield2 + (zmass(l)-1.4)*sn(l)
+c        yield2=yield2 + (zmass(l)-yrmn)*sn(l)
 c
 c CHEMICAL YIELDS FROM SNII ARE UPDATED
 c
@@ -4246,8 +4246,8 @@ c
        	  endif
           enddo
 c
-c	yield2=yield2 + (zmass(l)-1.4)*sn(l)
-        yield2=yield2 + (zmass(l)-yrmn)*sn(l)
+	yield2=yield2 + (zmass(l)-1.4)*sn(l)
+c        yield2=yield2 + (zmass(l)-yrmn)*sn(l)
 c
 c CHEMICAL YIELDS FROM SNII ARE UPDATED
 c
@@ -4351,8 +4351,8 @@ c
        	  endif
           enddo
 c
-c	yield2=yield2 + (zmass(l)-1.4)*sn(l)
-        yield2=yield2 + (zmass(l)-yrmn)*sn(l)
+	yield2=yield2 + (zmass(l)-1.4)*sn(l)
+c        yield2=yield2 + (zmass(l)-yrmn)*sn(l)
 c
 c CHEMICAL YIELDS FROM SNII ARE UPDATED
 c
@@ -4454,8 +4454,8 @@ c
        	  endif
           enddo
 c
-c	yield2=yield2 + (zmass(l)-1.4)*sn(l)
-        yield2=yield2 + (zmass(l)-yrmn)*sn(l)
+	yield2=yield2 + (zmass(l)-1.4)*sn(l)
+c        yield2=yield2 + (zmass(l)-yrmn)*sn(l)
 c
 c CHEMICAL YIELDS FROM SNII ARE UPDATED
 c
@@ -4502,7 +4502,24 @@ c
           tmass = tmass + (yield*tstep)
       endif
 c    
-       
+
+        yield_cor = yieh2 + yiehe2 + yiec2 + yien2 + yieo2
+        yield_cor = yield_cor + yiemg2 + yiesi2 + yies2 + yiefe2
+
+        IF(yield_cor .GT. 0) THEN
+          yieh2  = yieh2 * yield2 / yield_cor
+          yiehe2 = yiehe2* yield2 / yield_cor
+          yiec2  = yiec2 * yield2 / yield_cor
+          yien2  = yien2 * yield2 / yield_cor
+          yieo2  = yieo2 * yield2 / yield_cor
+          yiemg2 = yiemg2* yield2 / yield_cor
+          yiesi2 = yiesi2* yield2 / yield_cor
+          yies2  = yies2 * yield2 / yield_cor
+          yiefe2 = yiefe2* yield2 / yield_cor
+        ENDIF
+
+
+c
 	write(93,500)time_in,
      *    alog10(yieh1+1.e-30),
      *    alog10(yiehe1+1.e-30),alog10(yiec1+1.e-30),
@@ -4516,7 +4533,7 @@ c
      *    alog10(yies2+1.e-30),alog10(yiefe2+1.e-30),
      *    alog10(yield1+1.e-30),alog10(yield2+1.e-30),
      *    alog10(yield+1.e-30),alog10(tmass+1.e-30)
-500    format(1x,e10.5,2x,18f8.3,2x,f8.3,2x,f8.3,2x,f8.3,2x,f8.3)
+500    format(1x,e10.5,2x,18f13.8,2x,f13.8,2x,f13.8,2x,f13.8,2x,f13.8)
 c
 c      	   write(930,600)
 c600 	   format('  <datarow>')
