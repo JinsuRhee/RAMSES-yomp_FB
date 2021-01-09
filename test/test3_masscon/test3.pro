@@ -1,7 +1,7 @@
 PRO test3, settings
 
-	test3_corsn, settings
-	STOP
+	;test3_corsn, settings
+	;STOP
 	;test3_rmtable, settings
 
 	;STOP
@@ -59,13 +59,13 @@ PRO test3, settings
 
 
 	;;----- Wind
-	cgDisplay, 800, 800
-	!p.charsize=2.2 & !p.font = -1 & !p.charthick=1.5
-	cgPlot, array.t, metal_wn, linestyle=2, color='red', /xlog, /ylog, thick=3, $
-		xtitle='Time [yr]', ytitle='Cumu- Frac-'
-	cgOplot, array.t, mass_wn, linestyle=1, color='blue', thick=3
+	;cgDisplay, 800, 800
+	;!p.charsize=2.2 & !p.font = -1 & !p.charthick=1.5
+	;cgPlot, array.t, metal_wn, linestyle=2, color='red', /xlog, /ylog, thick=3, $
+	;	xtitle='Time [yr]', ytitle='Cumu- Frac-'
+	;cgOplot, array.t, mass_wn, linestyle=1, color='blue', thick=3
 
-	STOP
+	;STOP
 	;;----- SN
 	cgDisplay, 800, 800
 	!p.charsize=2.2 & !p.font = -1 & !p.charthick=1.5
