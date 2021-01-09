@@ -1,0 +1,45 @@
+#! /bin/csh -f
+# -----------------------------------------
+# UNIX Script to run galaxy code
+# -----------------------------------------
+#
+# Usage: 1) Edit six user-defined quantities found below
+#        2) Run code with 'nice go_galaxy &' --> output in 'time_used'
+# -----------------------------------------------------------------------
+# Six user-defined quantities:
+#           Directory where the run is made (=directory of this file):
+set    drun=/home/jinsu/RAMSES-yomp_FB/src/ssp/starburst99/output/swind_kp_pagb
+#           Name of input file:
+set  ninput=standard.input1
+#           Name and extension number of output files:
+#           --> files will be: noutput.colornext, noutput.quantnext etc.
+set noutput=m41_sn/standard
+set    next=1
+#           Directory where code is:
+set   dcode=/home/jinsu/RAMSES-yomp_FB/src/ssp/starburst99/
+#          Name of code: 
+set   ncode=galaxy#_wonly_js
+#           Directory where libraries are:
+set   dlib=/home/jinsu/RAMSES-yomp_FB/src/ssp/starburst99
+#- - - - - - - DO NOT MODIFY below this line - - - - - - - - - - - - - -
+
+cd $drun
+# A) Create links (assign) to directories with input files
+	# Tracks + Spectral type calibration:
+if (!(-e tracks)) ln -s $dlib/tracks/ tracks
+	# Atmosphere models:
+if (!(-e lejeune)) ln -s $dlib/lejeune/ lejeune
+	# Spectral libraries:
+if (!(-e auxil)) ln -s $dlib/auxil/ auxil
+
+# B) Link input file, RUN code, and save output data
+echo "Job on `hostname` started at `date`" >time_used
+echo " ">>time_used
+
+if (-e fort.1) /usr/bin/rm fort.1
+if (-e $ninput) ln -s $ninput fort.1
+(/usr/bin/time $dcode/$ncode) >>& time_used
+echo " ">>time_used
+
+$dcode/save_output $noutput $next >>time_used
+echo "Done at `date`" >>time_used
