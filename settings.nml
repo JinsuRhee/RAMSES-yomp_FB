@@ -7,12 +7,17 @@ num_thread	= 20L
 ## Path Settings
 ##-----
 dir_save	= '/storage6/jinsu/var/YOMP_NewFB/'
+
 ##-----
 ## SSP Data processing
 ##-----
 p_s99org_kp_pagb	= 2L
 	dir_s99org_kp_pagb	= '/home/jinsu/RAMSES-yomp_FB/data/starburst99/kp_pagb/'
 	Z_s99org_kp_pagb= [0.0004, 0.004, 0.008, 0.020, 0.050]
+
+p_s99org_cb_pagb	= 1L
+	dir_s99org_cb_pagb	= '/home/jinsu/RAMSES-yomp_FB/data/starburst99/cb_pagb/'
+	Z_s99org_cb_pagb= [0.0004, 0.004, 0.008, 0.020, 0.050]
 
 p_s99orgsn_kp_pagb	= 2L
 	dir_s99orgsn_kp_pagb	= '/home/jinsu/RAMSES-yomp_FB/data/starburst99/kp_pagb/'
@@ -22,19 +27,30 @@ p_s99ts_kp_pagb		= 2L
 	dir_s99ts_kp_pagb	= '/home/jinsu/RAMSES-yomp_FB/data/starburst99_ts/kp_pagb/'
 	Z_s99ts_kp_pagb= [0.0004, 0.004, 0.008, 0.020, 0.050]
 
+p_yohan			= 2L
+	p_yohan_gen	= 2L
+	p_yohan_pp	= 1L
+		p_yohan_elemlist = ['H', 'He', 'C', 'N', 'O', 'F', 'Ne', 'Mg', 'Si', 'S', 'Fe']
+
 ##-----
 ## Procedure
 ##-----
 p1_maketbl	= 1L
-	p1_tbltype	= 's99org'
+	p1_tbltype	= 's99org_cb'
 
-
+p2_sntable	= 1L
+	p2_tbltype	= 's99org_cb'
 
 ##-----
 ## Tests
 ##-----
 test1	= 2L		;; make mock table
 test2	= 2L		;; JS VS. TS
+test3	= 2L		;; Mass conservation test on SB99
+test4	= 2L		;; SB99 vs. YOHAN
+test5	= 2L		;; IMF test
+test6	= 2L		;; IMF test2
+test7	= 2L		;; SN Table
 
 ##-----
 ## LIST OF CALL FUNCTIONS
