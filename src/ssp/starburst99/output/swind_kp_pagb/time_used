@@ -1,0 +1,56 @@
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+Job on gc7 started at Thu 24 Dec 2020 08:20:09 AM UTC
+=======
+Job on gc7 started at Mon 28 Dec 2020 04:16:51 AM UTC
+>>>>>>> 1a47a62... remainings
+ 
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+50.03user 0.31system 0:50.35elapsed 99%CPU (0avgtext+0avgdata 72836maxresident)k
+0inputs+136672outputs (0major+17438minor)pagefaults 0swaps
+ 
+<<<<<<< HEAD
+Save synthesis-files to m45_sn/standard.*1
+Done at Thu 24 Dec 2020 08:21:09 AM UTC
+=======
+Job on gc7 started at Wed 23 Dec 2020 01:34:39 PM UTC
+=======
+Job on gc7 started at Thu 24 Dec 2020 08:20:09 AM UTC
+>>>>>>> fecffcf... test
+ 
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+59.03user 0.39system 0:59.47elapsed 99%CPU (0avgtext+0avgdata 72704maxresident)k
+46336inputs+136512outputs (0major+31939minor)pagefaults 0swaps
+ 
+<<<<<<< HEAD
+Save synthesis-files to m45/standard.*1
+Done at Wed 23 Dec 2020 01:35:45 PM UTC
+>>>>>>> 02036fc... src dir & sb99 codes
+=======
+Save synthesis-files to m45_sn/standard.*1
+Done at Thu 24 Dec 2020 08:21:09 AM UTC
+>>>>>>> fecffcf... test
+=======
+Save synthesis-files to m45/standard.*1
+Done at Mon 28 Dec 2020 04:17:42 AM UTC
+>>>>>>> 1a47a62... remainings
+=======
+Job on gc7 started at Fri 01 Jan 2021 12:05:43 PM UTC
+ 
+Command terminated by signal 2
+1.09user 0.03system 0:01.12elapsed 99%CPU (0avgtext+0avgdata 13472maxresident)k
+0inputs+0outputs (0major+2725minor)pagefaults 0swaps
+>>>>>>> d1321e2... Corrected progenitor mass is added
+=======
+Job on gc7 started at Fri 08 Jan 2021 05:20:35 PM UTC
+ 
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+67.14user 0.64system 1:07.79elapsed 99%CPU (0avgtext+0avgdata 72888maxresident)k
+0inputs+137472outputs (0major+17477minor)pagefaults 0swaps
+ 
+Save synthesis-files to m45/standard.*1
+Done at Fri 08 Jan 2021 05:21:43 PM UTC
+>>>>>>> 9a71537... starburst99 code updated to cover chabrier IMF and SN mass correction

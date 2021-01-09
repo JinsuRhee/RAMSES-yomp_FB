@@ -1,0 +1,47 @@
+##-----
+## General Settings
+##-----
+num_thread	= 20L
+
+##-----
+## Path Settings
+##-----
+dir_save	= '/storage6/jinsu/var/YOMP_NewFB/'
+##-----
+## SSP Data processing
+##-----
+p_s99org_kp_pagb	= 2L
+	dir_s99org_kp_pagb	= '/home/jinsu/RAMSES-yomp_FB/data/starburst99/kp_pagb/'
+	Z_s99org_kp_pagb= [0.0004, 0.004, 0.008, 0.020, 0.050]
+
+p_s99orgsn_kp_pagb	= 2L
+	dir_s99orgsn_kp_pagb	= '/home/jinsu/RAMSES-yomp_FB/data/starburst99/kp_pagb/'
+	Z_s99orgsn_kp_pagb= [0.0004, 0.004, 0.008, 0.020, 0.050]
+
+p_s99ts_kp_pagb		= 2L
+	dir_s99ts_kp_pagb	= '/home/jinsu/RAMSES-yomp_FB/data/starburst99_ts/kp_pagb/'
+	Z_s99ts_kp_pagb= [0.0004, 0.004, 0.008, 0.020, 0.050]
+
+##-----
+## Procedure
+##-----
+p1_maketbl	= 1L
+	p1_tbltype	= 's99org'
+
+
+
+##-----
+## Tests
+##-----
+test1	= 2L		;; make mock table
+test2	= 2L		;; JS VS. TS
+
+##-----
+## LIST OF CALL FUNCTIONS
+##-----
+##	get_gyr.pro
+##		= get_gyr(conformal time, info.txt dir, lib dir, num_thread, n_snap)
+##		> Conformal time to Gyr and Sfactor
+##
+##	get_flux.pro
+##		= get_flux(mass (solar), metal, gyr, 

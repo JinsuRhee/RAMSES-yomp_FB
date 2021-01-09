@@ -1,0 +1,24 @@
+#!/bin/csh
+# ---------------------------------------------------
+# UNIX Script to save output files of synthesis code
+# ---------------------------------------------------
+echo "Save synthesis-files to $1.*$2"
+/bin/cp fort.1 	$1.input$2
+/bin/mv fort.99 $1.output$2
+/bin/mv fort.98 $1.quanta$2
+/bin/mv fort.97 $1.snr$2
+/bin/mv fort.96 $1.hrd$2
+/bin/mv fort.95 $1.power$2
+/bin/mv fort.94 $1.sptyp1$2
+/bin/mv fort.90 $1.sptyp2$2
+/bin/mv fort.93 $1.yield$2
+/bin/mv fort.92 $1.spectrum$2
+/bin/mv fort.91 $1.uvline$2
+/bin/mv fort.89 $1.color$2
+/bin/mv fort.88 $1.ewidth$2
+/bin/mv fort.87 $1.irfeature$2
+/bin/mv fort.86 $1.ovi$2
+/bin/mv fort.84 $1.wrlines$2
+/bin/mv fort.83 $1.ifaspec$2
+/bin/mv fort.82 $1.hires$2
+

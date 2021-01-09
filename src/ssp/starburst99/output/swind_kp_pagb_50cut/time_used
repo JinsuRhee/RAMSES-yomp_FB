@@ -1,0 +1,8 @@
+Job on gc7 started at Fri 08 Jan 2021 11:40:33 AM UTC
+ 
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+16.42user 0.14system 0:16.56elapsed 99%CPU (0avgtext+0avgdata 72672maxresident)k
+0inputs+34992outputs (0major+17441minor)pagefaults 0swaps
+ 
+Save synthesis-files to m45/standard.*1
+Done at Fri 08 Jan 2021 11:40:50 AM UTC
