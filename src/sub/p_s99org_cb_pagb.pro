@@ -1,12 +1,12 @@
-PRO p_s99org_kp_pagb, settings
+PRO p_s99org_cb_pagb, settings
 
 	;;-----
 	;; READ TABLE FIRST
 	;;-----
 
-	dir	= settings.dir_s99org_kp_pagb
+	dir	= settings.dir_s99org_cb_pagb
 	suffix	= ['m41', 'm42', 'm43', 'm44', 'm45']
-	metal	= settings.Z_s99org_kp_pagb
+	metal	= settings.Z_s99org_cb_pagb
 	IF N_ELEMENTS(suffix) NE N_ELEMENTS(metal) THEN BEGIN
 		PRINT, 'metallicity bin are not consistent w/ the data'
 		STOP
@@ -90,9 +90,6 @@ PRO p_s99org_kp_pagb, settings
 	ml_sn		= 10.d^ml_sn
 
 	;;-----
-	;; MASS CORRECTION FOR SN
-	;;-----
-	;;-----
 	;; MAKE CUMULATIVE TABLE
 	;;-----
 	cyield_wn	= yield_wn * 0.d
@@ -113,21 +110,21 @@ PRO p_s99org_kp_pagb, settings
 		ENDFOR
 
 		FOR iz=0L, nmetal - 1L DO FOR ie=0L, nelem - 1L DO BEGIN
-			cyield_sn(iz,i,ie)	+= cyield_sn(iz,j,ie)
+			cyield_sn(iz,i,ie)      += cyield_sn(iz,j,ie)
 			IF yield_sn(iz,i,ie) GT 1.0d-29 THEN $
 				cyield_sn(iz,i,ie) += yield_sn(iz,i,ie) * dt
 		ENDFOR
 
- 		FOR iz=0L, nmetal - 1L DO BEGIN
+		FOR iz=0L, nmetal - 1L DO BEGIN
 			cml_wn(iz,i) += cml_wn(iz,j)
 			IF ml_wn(iz,i) GT 1.0d-29 THEN $
 				cml_wn(iz,i) += ml_wn(iz,i) * dt
 		ENDFOR
 
- 		FOR iz=0L, nmetal - 1L DO BEGIN
+		FOR iz=0L, nmetal - 1L DO BEGIN
 			cml_sn(iz,i) += cml_sn(iz,j)
 			IF ml_sn(iz,i) GT 1.0d-29 THEN $
-	 			cml_sn(iz,i) += ml_sn(iz,i) * dt
+				cml_sn(iz,i) += ml_sn(iz,i) * dt
 		ENDFOR
 
 		tprev	= time(i)
@@ -146,11 +143,12 @@ PRO p_s99org_kp_pagb, settings
 	ml_wn		= ml_wn /1.0d4
 	ml_sn		= ml_sn / 1.0d4
 
+
 	array	= {T:time, Z:metal, cyield_wn:cyield_wn, cyield_sn:cyield_sn, $
 		cml_wn:cml_wn, cml_sn:cml_sn, $
 		yield_wn:yield_wn, yield_sn:yield_sn, ml_wn:ml_wn, ml_sn:ml_sn, $
 		en_wn:en_wn}
 
-	SAVE, filename=settings.dir_save + 'swind_s99org_kp_pagb.sav', array
+	SAVE, filename=settings.dir_save + 'swind_s99org_cb_pagb.sav', array
 
 END

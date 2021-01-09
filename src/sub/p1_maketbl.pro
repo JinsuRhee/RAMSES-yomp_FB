@@ -3,9 +3,12 @@ PRO p1_maketbl, settings
 	;;-----
 	;; LOAD TABLE
 	;;-----
-	IF settings.p1_tbltype EQ 's99org' THEN BEGIN
+	IF settings.p1_tbltype EQ 's99org_kp' THEN BEGIN
 		RESTORE, settings.dir_save + 'swind_s99org_kp_pagb.sav'
 		suffix	= 's99org_kp_pagb.dat'
+	ENDIF ELSE IF settings.p1_tbltype EQ 's99org_cb' THEN BEGIN
+		RESTORE, settings.dir_save + 'swind_s99org_cb_pagb.sav'
+		suffix	= 's99org_cb_pagb.dat'
 	ENDIF ELSE BEGIN
 		PRINT, 'TABLE HAS NOT BEEN IMPLEMENTED YET'
 		DOC_LIBRARY, 'p1_maketbl'
