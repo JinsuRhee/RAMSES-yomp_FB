@@ -9,11 +9,34 @@ PRO p1_maketbl, settings
 	ENDIF ELSE IF settings.p1_tbltype EQ 's99org_cb' THEN BEGIN
 		RESTORE, settings.dir_save + 'swind_s99org_cb_pagb.sav'
 		suffix	= 's99org_cb_pagb.dat'
+	ENDIF ELSE IF settings.p1_tbltype EQ 'yohan_cb' THEN BEGIN
+		RESTORE, settings.dir_save + 'swind_yohan_cb_pagb.sav'
+		tmp     = 'array = array.' + STRTRIM(settings.p1_tbltype_vrot,2)
+		void	= EXECUTE(tmp)
+		suffix	= 'yohan_cb_pagb_' + STRTRIM(settings.p1_tbltype_vrot,2) + '.dat'
 	ENDIF ELSE BEGIN
 		PRINT, 'TABLE HAS NOT BEEN IMPLEMENTED YET'
 		DOC_LIBRARY, 'p1_maketbl'
 		STOP
 	ENDELSE
+
+	;;-----
+	;; Time Range
+	;;-----
+	zr	= N_ELEMENTS(array.cyield_wn(*,0,0))
+	er	= N_ELEMENTS(array.cyield_wn(0,0,*))
+	tcut	= LINDGEN(N_ELEMENTS(array.t))
+	FOR i=0L, zr-1L DO BEGIN
+		FOR j=0L, er-1L DO BEGIN
+			tcut_dum	= WHERE(array.cyield_wn(i,*,j) GT 0., ncut)
+			IF ncut LE N_ELEMENTS(tcut) THEN tcut = tcut_dum
+		ENDFOR
+	ENDFOR
+	array	= {t:array.t(tcut), $
+		z:array.z, $
+		cyield_wn:array.cyield_wn(*,tcut,*), $
+		cml_wn:array.cml_wn(*,tcut), $
+		en_wn:array.en_wn(*,tcut)}
 
 	;;-----
 	;; MAKE TABLE IN A RAMSES-NEEDED FORMAT
@@ -60,5 +83,4 @@ PRO p1_maketbl, settings
 	ENDFOR
 	CLOSE, 10
 
-	STOP
 END

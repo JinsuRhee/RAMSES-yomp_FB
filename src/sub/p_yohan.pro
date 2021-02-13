@@ -49,13 +49,13 @@ IF settings.p_yohan_gen EQ 1L THEN BEGIN
 	;;-----
 	;; Run
 	;;-----
-	cd, dir
+	CD, dir
 	run_all_yield_release, /chabrier,$
 		mfailed=mfailed, $
 		failed_fraction=failed_fraction, $
 		mass_separatrix=mass_separatrix, $
 		dir=dir, outdir=outdir
-	cd, settings.root_path + 'src'
+	CD, settings.root_path + 'src'
 ENDIF
 
 IF settings.p_yohan_pp EQ 1L THEN BEGIN
@@ -104,6 +104,7 @@ IF settings.p_yohan_pp EQ 1L THEN BEGIN
 			;;-----
 			;; READ SN Yield?
 			;;-----
+
 			file	= f_vrotls(ri) + '/*_z' + STRTRIM(zstr(zi2),2) + '_*.txt'
 			file	= FILE_SEARCH(file)
 
@@ -134,6 +135,7 @@ IF settings.p_yohan_pp EQ 1L THEN BEGIN
 			;;-----
 			;; READ WN YIELD
 			;;-----
+
 			file	= f_vrotls(ri) + '/*_z' + STRTRIM(zstr(zi2),2) + '_*.txt.agb'
 			file	= FILE_SEARCH(file)
 
@@ -162,6 +164,7 @@ IF settings.p_yohan_pp EQ 1L THEN BEGIN
 			;;-----
 			;; READ SN ENERGY
 			;;-----
+
 			file	= f_vrotls(ri) + '/*_z' + STRTRIM(zstr(zi2),2) + '_*.txt.esnII'
 			file	= FILE_SEARCH(file)
 
@@ -187,7 +190,9 @@ IF settings.p_yohan_pp EQ 1L THEN BEGIN
 	;cml_wn		= REFORM(ml_wn(0,*,*)*0.d,nmetal,ntime)
 	;cml_sn		= REFORM(ml_sn(0,*,*)*0.d,nmetal,ntime)
 
-	array	= {zmet:zmet(SORT(zmet)), vrot:vrot, elemlist:settings.p_yohan_elemlist}
+	metal_rearr	= SORT(zmet)
+	zmet	= zmet(metal_rearr)
+	array	= {zmet:zmet, vrot:vrot, elemlist:settings.p_yohan_elemlist}
 	tprev	= 0.d
 	FOR ri=0L, nrot-1L DO BEGIN
 		cyield_wn	= REFORM(yield_wn(ri,*,*,*),nmetal,ntime,nelem)
@@ -197,6 +202,17 @@ IF settings.p_yohan_pp EQ 1L THEN BEGIN
 		cml_wn	= REFORM(ml_wn(ri,*,*),nmetal,ntime)
 		cml_sn	= REFORM(ml_sn(ri,*,*),nmetal,ntime)
 		cml_sn	= cml_sn - cml_wn
+
+		cyield_wn	= cyield_wn(metal_rearr,*,*)
+		cyield_sn	= cyield_sn(metal_rearr,*,*)
+		cml_wn		= cml_wn(metal_rearr,*)
+		cml_sn		= cml_sn(metal_rearr,*)
+
+		cen_wn	= REFORM(en_wn(ri,*,*),nmetal,ntime)
+		cen_sn	= REFORM(en_sn(ri,*,*),nmetal,ntime)
+
+		cen_wn	= cen_wn(metal_rearr,*)
+		cen_sn	= cen_sn(metal_rearr,*)
 		;FOR ti=0L, ntime-1L DO BEGIN
 		;	dt	= time(ti) - tprev
 		;	j	= ti - 1
@@ -219,8 +235,8 @@ IF settings.p_yohan_pp EQ 1L THEN BEGIN
 			cml_wn:cml_wn, cml_sn:cml_sn, $
 			;ml_wn:REFORM(ml_wn(ri,*,*),nmetal,ntime), $
 			;ml_sn:REFORM(ml_sn(ri,*,*),nmetal,ntime), $
-			en_wn:REFORM(en_wn(ri,*,*),nmetal,ntime), $
-			el_sn:REFORM(en_sn(ri,*,*),nmetal,ntime)}
+			en_wn:cen_wn, $
+			en_sn:cen_sn}
 
 		array	= CREATE_STRUCT(array,STRTRIM(vrot(ri),2),dumstr)
 	ENDFOR
