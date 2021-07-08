@@ -6,10 +6,12 @@ num_thread	= 20L
 ##-----
 ## Path Settings
 ##-----
+#	Directory where .sav file stored
 dir_save	= '/storage6/jinsu/var/YOMP_NewFB/'
 
 ##-----
-## SSP Data processing
+## SSP Data processing (1 on / others off)
+##	- This routine does a post-processing of STARBURST99 (or Yohan's) yield data
 ##-----
 p_s99org_kp_pagb	= 2L
 	dir_s99org_kp_pagb	= '/home/jinsu/RAMSES-yomp_FB/data/starburst99/kp_pagb/'
@@ -28,16 +30,26 @@ p_s99ts_kp_pagb		= 2L
 	Z_s99ts_kp_pagb= [0.0004, 0.004, 0.008, 0.020, 0.050]
 
 p_yohan			= 2L
+#		Generate Yohan's yield table
 	p_yohan_gen	= 2L
+#		Post-processing it
 	p_yohan_pp	= 1L
 		p_yohan_elemlist = ['H', 'He', 'C', 'N', 'O', 'F', 'Ne', 'Mg', 'Si', 'S', 'Fe']
 
 ##-----
 ## Procedure
 ##-----
+#	Generate yield table for RAMSES
+#		s99org_cb
+#		s99org_kp
+#		yohan_cb
 p1_maketbl	= 1L
 	p1_tbltype	= 's99org_cb'
 
+#	Generate SNII table for RAMSES
+#		s99org_kp
+#		s99org_cb
+#		yohan_cb
 p2_sntable	= 1L
 	p2_tbltype	= 's99org_cb'
 
@@ -55,9 +67,3 @@ test7	= 2L		;; SN Table
 ##-----
 ## LIST OF CALL FUNCTIONS
 ##-----
-##	get_gyr.pro
-##		= get_gyr(conformal time, info.txt dir, lib dir, num_thread, n_snap)
-##		> Conformal time to Gyr and Sfactor
-##
-##	get_flux.pro
-##		= get_flux(mass (solar), metal, gyr, 
