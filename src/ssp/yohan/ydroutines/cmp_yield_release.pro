@@ -888,9 +888,11 @@ endif
 ;; ==========================================================
 if not keyword_set(maxage)then maxage=2d10
 lt1=alog10(maxage)
-t0=1d6
+;t0=1d6
+t0=1d5
 lt0=alog10(t0)
-dlt=0.1d0 ; dex
+;dlt=0.1d0 ; dex
+dlt=0.05d0
 nt=(lt1-lt0)/dlt
 ltime_evol=lt0+findgen(nt)*(lt1-lt0)/double(nt)
 asampling_linear=10d0^asampling

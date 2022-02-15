@@ -4516,6 +4516,15 @@ c
           yiesi2 = yiesi2* yield2 / yield_cor
           yies2  = yies2 * yield2 / yield_cor
           yiefe2 = yiefe2* yield2 / yield_cor
+          !yieh2  = yieh2 * yield_cor / yield2
+          !yiehe2 = yiehe2* yield_cor / yield2
+          !yiec2  = yiec2 * yield_cor / yield2
+          !yien2  = yien2 * yield_cor / yield2
+          !yieo2  = yieo2 * yield_cor / yield2
+          !yiemg2 = yiemg2* yield_cor / yield2
+          !yiesi2 = yiesi2* yield_cor / yield2
+          !yies2  = yies2 * yield_cor / yield2
+          !yiefe2 = yiefe2* yield_cor / yield2
         ENDIF
 
 

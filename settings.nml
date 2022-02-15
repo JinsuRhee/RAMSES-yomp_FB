@@ -17,8 +17,9 @@ p_s99org_kp_pagb	= 2L
 	dir_s99org_kp_pagb	= '/home/jinsu/RAMSES-yomp_FB/data/starburst99/kp_pagb/'
 	Z_s99org_kp_pagb= [0.0004, 0.004, 0.008, 0.020, 0.050]
 
-p_s99org_cb_pagb	= 1L
-	dir_s99org_cb_pagb	= '/home/jinsu/RAMSES-yomp_FB/data/starburst99/cb_pagb/'
+p_s99org_cb_pagb	= 2L
+	#dir_s99org_cb_pagb	= '/home/jinsu/RAMSES-yomp_FB/data/starburst99/cb_pagb/'
+	dir_s99org_cb_pagb	= '/home/jinsu/RAMSES-yomp_FB/data/starburst99/cb_pagb_20_100/'
 	Z_s99org_cb_pagb= [0.0004, 0.004, 0.008, 0.020, 0.050]
 
 p_s99orgsn_kp_pagb	= 2L
@@ -33,7 +34,7 @@ p_yohan			= 2L
 #		Generate Yohan's yield table
 	p_yohan_gen	= 2L
 #		Post-processing it
-	p_yohan_pp	= 1L
+	p_yohan_pp	= 2L
 		p_yohan_elemlist = ['H', 'He', 'C', 'N', 'O', 'F', 'Ne', 'Mg', 'Si', 'S', 'Fe']
 
 ##-----
@@ -44,14 +45,21 @@ p_yohan			= 2L
 #		s99org_kp
 #		yohan_cb
 p1_maketbl	= 1L
+	#p1_tbltype	= 'yohan_cb'
 	p1_tbltype	= 's99org_cb'
+		p1_dust	= 'on'
+		p1_dust_fname	= '/storage6/hansan/testruns/smbht/16th/ramses_swind_Sikey.dat'
+		#p1_tbltype_vrot	= 'v300'
 
 #	Generate SNII table for RAMSES
 #		s99org_kp
 #		s99org_cb
 #		yohan_cb
-p2_sntable	= 1L
-	p2_tbltype	= 's99org_cb'
+p2_sntable	= 2L
+	p2_tbltype	= 'yohan_cb'
+		p2_tbltype_vrot	= 'v300'
+	#p2_tbltype	= 's99org_cb'
+	#p2_tbltype	= 's99org_kp'
 
 ##-----
 ## Tests
@@ -63,7 +71,8 @@ test4	= 2L		;; SB99 vs. YOHAN
 test5	= 2L		;; IMF test
 test6	= 2L		;; IMF test2
 test7	= 2L		;; SN Table
-
+test8	= 2L		;; Table sanity check (O vs. Mg)
+test9	= 2L		;; IMF
+test10	= 1L		;; SANITY CHECK
 ##-----
-## LIST OF CALL FUNCTIONS
-##-----
+## LIST OF CALL FUNCTIONS##-----

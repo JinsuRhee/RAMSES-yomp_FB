@@ -44,6 +44,9 @@ Pro main
 	IF Settings.Test5 EQ 1L THEN test5, settings
 	IF Settings.Test6 EQ 1L THEN test6, settings
 	IF Settings.Test7 EQ 1L THEN test7, settings
+	IF Settings.Test8 EQ 1L THEN test8, settings
+	IF Settings.Test9 EQ 1L THEN test9, settings
+	IF Settings.Test10 EQ 1L THEN test10, settings
 	STOP	
 
 End
