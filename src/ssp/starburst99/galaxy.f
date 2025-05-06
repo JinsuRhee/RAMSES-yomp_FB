@@ -667,7 +667,8 @@ c
 	common/nucleo_r/critma1,critma_new1,critup1,critup_new1,
      *		yield,yieh,yiehe,yiec,yien,yieo,yiemg,yiesi,
      *	        yies,yiefe,yield1,yieh1,yiehe1,yiec1,yien1,
-     *		yieo1,yiemg1,yiesi1,yies1,yiefe1,tmass
+     *          yieo1,yiemg1,yiesi1,yies1,yiefe1,tmass,
+     *          yiecD,yiesiD,yiecD1,yiesiD1
      	common/windpower_r/wpow,wpow1,wpow2,wpow3,wpow4,
      *                     wmom,wmom1,wmom2,wmom3,wmom4,wen
 	common/specsyn_r/stflux,toflux,fluneb,co2,ca2,ca4,
@@ -1716,7 +1717,6 @@ c        ENDDO
 
           dens(i) = dens(i) * js_dm2/js_dm
         ENDDO
-
 
 c
 c THE TOTAL MASS IS COMPUTED FROM THE STAR FORMATION RATE IF A STAR
@@ -3917,24 +3917,32 @@ c
 	common/nucleo_r/critma1,critma_new1,critup1,critup_new1,
      *		yield,yieh,yiehe,yiec,yien,yieo,yiemg,yiesi,
      *	        yies,yiefe,yield1,yieh1,yiehe1,yiec1,yien1,
-     *		yieo1,yiemg1,yiesi1,yies1,yiefe1,tmass
+     *          yieo1,yiemg1,yiesi1,yies1,yiefe1,tmass,
+     *          yiecD,yiesiD,yiecD1,yiesiD1
         parameter (npgrid = 3000)
 	dimension temp(npgrid),bol(npgrid),xsurf(npgrid),zmass(npgrid),
      *          ysurf(npgrid),xc12s(npgrid),xn14s(npgrid),xo16s(npgrid),
      *          bmdot(npgrid),cmass(npgrid),dens(npgrid),sn(npgrid),
-     *          ymass(5,12),yrm(5,12),
-     *          yh(5,12),yhe(5,12),yc(5,12),yn(5,12),
-     *          yo(5,12),ymg(5,12),ysi(5,12),ys(5,12),yfe(5,12),
+     *          ymass(4,9),yrm(4,9),
+     *          yh(4,9),yhe(4,9),yc(4,9),yn(4,9),
+     *          yo(4,9),ymg(4,9),ysi(4,9),ys(4,9),yfe(4,9),
      *          tt_star(npgrid)
 	data xmg,xsi,xs,xfe /6.67e-4,6.98e-4,3.64e-4,1.83e-3/
         REAL(KIND=8) yrmn, yield_cor
+        REAL(KIND=8) dum1, dum2, dum3, mdum, zdum
+        INTEGER(KIND=4) mind, zind
 c
 c AT THE FIRST TIME STEP A HEADER FOR THE OUTPUT FILE IS GENERATED.
 c
 
+        muC =12.0107d0
+        muO =15.9990d0
+        muS =32.0650d0
+        muMg=24.3050d0
+        muSi=28.0855d0
+        muFe=55.8450d0
   
       if(icount.gt.1) goto 98
-      
       write(93,196) name
 196   format(' MODEL DESIGNATION: ',a20)
          call fdate(str_date)
@@ -3951,6 +3959,23 @@ c
 194   format('    TIME         H       HE      C       N       O'
      *     ,'       MG      SI      S'
      *     ,'      FE         ALL NINE ELEMENTS (H THROUGH FE)  ')
+
+      write(73,196) name
+         call fdate(str_date)
+      write(73,597) str_date
+      write(73,1195)
+1195  format(/,'                  RESULTS FOR THE',
+     *        ' DUST CHEMICAL YIELDS')
+      write(73,1193)
+1193  format(/,'     MASS LOSS VIA'
+     *        ,' STELLAR WINDS AND SNeII [Ms/YR]            '
+     *        ,' ONLY WINDS  ONLY SNE')
+      write(73,192)
+192   format('    TIME         C            SI'
+     *     ,'             C            SI')
+      
+      OPEN(4012,file='/home/jinsu/scratch/yieldtest.dat', 
+     *     status='unknown')
 c     
 c      write(930,960)
 c960   format('<Yields>')
@@ -3986,6 +4011,8 @@ c
         yiesi2=0.
         yies2=0.
         yiefe2=0.
+        yiecD2=0.
+        yiesiD2=0.
 c
         
 	if(isf.gt.0.and.icount.gt.1) goto 10
@@ -4004,6 +4031,8 @@ c
         yiesi=0.
         yies=0.
         yiefe=0.
+        yiecD=0.
+        yiesiD=0.
 c
 	yield1=0.
 	yieh1=0.
@@ -4015,6 +4044,8 @@ c
 	yiesi1=0.
 	yies1=0.
 	yiefe1=0.
+        yiecD1=0.
+        yiesiD1=0.
 10	continue
 
 
@@ -4035,17 +4066,17 @@ c DETERMINATION OF THE METALLICITY TO CALCULATE THE YIELDS AND USE OF A
 c METALLICITY INDEX.
 c
   
-	if (z.eq.0.05) then 
-           kz=1
-	else if (z.eq.0.20) then 
-           kz=2
-	else if (z.eq.0.40) then 
-           kz=3
-	else if (z.eq.1.00) then 
-           kz=4
-	else if (z.eq.2.00) then
-	   kz=5
-        endif
+c	if (z.eq.0.05) then 
+c           kz=1
+c	else if (z.eq.0.20) then 
+c           kz=2
+c	else if (z.eq.0.40) then 
+c           kz=3
+c	else if (z.eq.1.00) then 
+c           kz=4
+c	else if (z.eq.2.00) then
+c	   kz=5
+c        endif
               
 c
 c CHOICE OF THE STELLAR WIND MODEL. FOR EACH WIND MODEL THE OUTPUT
@@ -4064,6 +4095,8 @@ c
 c
 c MASS-LOSS RATES FROM THE GENEVA MODELS.
 c
+
+
 1000	do 100 l=lstart,lend,lstep
         if(bol(l).gt.-10.)then
 	yield1=yield1+wind1(l,ltype,3)*dens(l)
@@ -4076,10 +4109,40 @@ c
 	yiesi1=yiesi1+wind1(l,ltype,3)*xsi*z*dens(l)
 	yies1 =yies1 +wind1(l,ltype,3)*xs*z*dens(l)
 	yiefe1=yiefe1+wind1(l,ltype,3)*xfe*z*dens(l)
+
+c 	  JS%123123
+c 	    xsurf - xfe*z is the mass fraction of each element in ejecta mass
+
+
+c 	%-----123123
+c       % Dust boost
+c       %       Boost for the lowest metallicity bin
+c       %       Otherwise, regulated by the competition btw C and O
+c       %-----123123
+        !WRITE(4012, *) z, iz
+c        if(z .eq. 0.05) then
+c          yiecD1 = yiecD1 + 0.50*wind1(l,ltype,3)*dens(l)*xc12s(l)
+c          aa=MIN(xo16s(l)/(4d0*muO),xmg*z/muMg
+c     *            ,xsi*z/muSi,xfe*z/muFe) ! Olivine composition
+c             yiesiD1=yiesiD1+0.8*wind1(l,ltype,3)*dens(l)
+c     *            *aa*muSi
+c        else
+          if(xc12s(l)/muC.ge.xo16s(l)/muO)then
+             yiecD1=yiecD1+0.99*wind1(l,ltype,3)*dens(l)
+     *            *(xc12s(l)-muC/muO*xo16s(l))
+          else
+             aa=MIN(xo16s(l)/(4d0*muO),xmg*z/muMg
+     *            ,xsi*z/muSi,xfe*z/muFe) ! Olivine composition
+             yiesiD1=yiesiD1+0.8*wind1(l,ltype,3)*dens(l)
+     *            *aa*muSi
+          endif
+c        endif
+
+
         endif
-c        Skip cases which are NOT SN --> goto 120
+c     Skip cases which are NOT SN --> goto 120
         if (bol(l).gt.-10..or.cmass(l).gt.bhcut) goto 120
-       if (cmass(l).lt.sncut) then
+        if (cmass(l).lt.sncut) then
             if (isf.le.0) critma_new1 = cmass(l)
             goto 120
         endif
@@ -4119,29 +4182,139 @@ c OF STARS MORE MASSIVE THAN 40 M ARE IDENTICAL TO THOSE OF 30 M. FORTUNATELY,
 c THESE STARS ARE RARE ENOUGH TO MAKE ONLY A SMALL CONTRIBUTION TO THE 
 c TOTAL SN YIELDS. 
 c
-	fakemass=cmass(l)
-	if (cmass(l).gt.40.) then
-	fakemass=30.
-	endif
+      fakemass=cmass(l)
+      if (cmass(l).gt.40.) then
+        fakemass=30.
+        dum3 = cmass(l) / 30.
+      endif
 c
 c LINEAR INTERPOLATION OF THE YIELDS RELATIVE TO A CERTAIN STELLAR MASS
 c
-	 do k=2,12
-         if (fakemass.gt.ymass(kz,k-1).and.fakemass.le.ymass(kz,k)) then
-            rmass=(fakemass-ymass(kz,k-1))/(ymass(kz,k)-ymass(kz,k-1))
-	    yhn  =rmass*(yh(kz,k)-yh(kz,k-1))+yh(kz,k-1)
-	    yhen =rmass*(yhe(kz,k)-yhe(kz,k-1))+yhe(kz,k-1)
-            ycn  =rmass*(yc(kz,k)-yc(kz,k-1))+yc(kz,k-1)
-            ynn  =rmass*(yn(kz,k)-yn(kz,k-1))+yn(kz,k-1)
-	    yon  =rmass*(yo(kz,k)-yo(kz,k-1))+yo(kz,k-1)
-	    ymgn =rmass*(ymg(kz,k)-ymg(kz,k-1))+ymg(kz,k-1)
-	    ysin =rmass*(ysi(kz,k)-ysi(kz,k-1))+ysi(kz,k-1)
-	    ysn  =rmass*(ys(kz,k)-ys(kz,k-1))+ys(kz,k-1)
-	    yfen =rmass*(yfe(kz,k)-yfe(kz,k-1))+yfe(kz,k-1)
-            yrmn =rmass*(yrm(kz,k)-yrm(kz,k-1))+yrm(kz,k-1)
-       	  endif
-          enddo
+c 	 %123123 (start) metallicity interpolation for ck table
+c	 do k=2,12
+c         if (fakemass.gt.ymass(kz,k-1).and.fakemass.le.ymass(kz,k)) then
+c            rmass=(fakemass-ymass(kz,k-1))/(ymass(kz,k)-ymass(kz,k-1))
+c	    yhn  =rmass*(yh(kz,k)-yh(kz,k-1))+yh(kz,k-1)
+c	    yhen =rmass*(yhe(kz,k)-yhe(kz,k-1))+yhe(kz,k-1)
+c            ycn  =rmass*(yc(kz,k)-yc(kz,k-1))+yc(kz,k-1)
+c            ynn  =rmass*(yn(kz,k)-yn(kz,k-1))+yn(kz,k-1)
+c	    yon  =rmass*(yo(kz,k)-yo(kz,k-1))+yo(kz,k-1)
+c	    ymgn =rmass*(ymg(kz,k)-ymg(kz,k-1))+ymg(kz,k-1)
+c	    ysin =rmass*(ysi(kz,k)-ysi(kz,k-1))+ysi(kz,k-1)
+c	    ysn  =rmass*(ys(kz,k)-ys(kz,k-1))+ys(kz,k-1)
+c	    yfen =rmass*(yfe(kz,k)-yfe(kz,k-1))+yfe(kz,k-1)
+c            yrmn =rmass*(yrm(kz,k)-yrm(kz,k-1))+yrm(kz,k-1)
+c       	  endif
+c          enddo
 
+
+c       %-----123123
+c       % SN interpolation part
+c       %-----123123
+
+
+        DO k=1, 8
+c 		  normal case
+          IF(fakemass.GT.ymass(1,k) .AND. famkemass.LE.ymass(1,k+1))THEN
+            mind = k
+            mdum = (ymass(1,k+1)-fakemass) / (ymass(1,k+1)-ymass(1,k))
+            dum3 = 1.0
+          ENDIF
+        ENDDO
+
+c       Beyond lower bound (lowering the mass ejecta by dum3)
+        IF(fakemass.LE.ymass(1,1))THEN
+          mind = 1
+          mdum = 1.0
+          dum3 = fakemass/8.0
+c       Beyond upper bound (greater than 30 Msun)
+        ELSE IF(fakemass.GT.ymass(1,8))THEN
+          mind = 7
+          mdum = 0.0
+        ENDIF
+
+        IF(iz .EQ. 41)THEN ! Z = 0.02 Zsun
+          zind = 1
+          zdum = (0.05 - 0.02) / (0.05 - 0.00)
+        ELSE IF (iz .EQ. 42) THEN ! Z = 0.2 Zsun
+          zind = 3
+          zdum = (1.00 - 0.2) / (1.00 - 0.2)
+        ELSE IF (iz .EQ. 43) THEN ! Z = 0.4 Zsun
+          zind = 3
+          zdum = (1.00 - 0.4) / (1.00 - 0.2)
+        ELSE IF (iz .EQ. 44) THEN ! Z = 1 Zsun
+          zind = 3
+          zdum = 0.
+        ELSE IF (iz .EQ. 45) THEN ! Z = 2.5 Zsun (no extrapolation)
+          zind = 3
+          zdum = 0.
+        ENDIF
+        !old ver
+c        IF(z.EQ.0.05)THEN
+c          zind = 2
+c          zdum = 1.0
+c        ELSE IF(z.EQ.0.20)THEN
+c          zind = 3
+c          zdum = 1.0
+c        ELSE IF(z.EQ.0.40)THEN
+c          zind = 3
+c          zdum = (1.-0.4)/(1.-0.2)
+c        ELSE IF(z.EQ.1.00)THEN
+c          zind = 3
+c          zdum = 0.0
+c        ELSE IF(z.EQ.2.00)THEN
+c          zind = 3
+c          zdum = 0.0
+c        ENDIF
+
+        dum1= yh(zind,mind)*mdum + yh(zind,mind+1)*(1.-mdum)
+        dum2= yh(zind+1,mind)*mdum + yh(zind+1,mind+1)*(1.-mdum)
+        yhn = dum1*zdum + dum2*(1.-zdum)
+                  
+        dum1= yhe(zind,mind)*mdum + yhe(zind,mind+1)*(1.-mdum)
+        dum2= yhe(zind+1,mind)*mdum + yhe(zind+1,mind+1)*(1.-mdum)
+        yhen = dum1*zdum + dum2*(1.-zdum)
+        
+        dum1= yc(zind,mind)*mdum + yc(zind,mind+1)*(1.-mdum)
+        dum2= yc(zind+1,mind)*mdum + yc(zind+1,mind+1)*(1.-mdum)
+        ycn = dum1*zdum + dum2*(1.-zdum)
+                  
+        dum1= yn(zind,mind)*mdum + yn(zind,mind+1)*(1.-mdum)
+        dum2= yn(zind+1,mind)*mdum + yn(zind+1,mind+1)*(1.-mdum)
+        ynn = dum1*zdum + dum2*(1.-zdum)
+
+        dum1= yo(zind,mind)*mdum + yo(zind,mind+1)*(1.-mdum)
+        dum2= yo(zind+1,mind)*mdum + yo(zind+1,mind+1)*(1.-mdum)
+        yon = dum1*zdum + dum2*(1.-zdum)
+
+        dum1= ymg(zind,mind)*mdum + ymg(zind,mind+1)*(1.-mdum)
+        dum2= ymg(zind+1,mind)*mdum + ymg(zind+1,mind+1)*(1.-mdum)
+        ymgn = dum1*zdum + dum2*(1.-zdum)
+                  
+        dum1= ysi(zind,mind)*mdum + ysi(zind,mind+1)*(1.-mdum)
+        dum2= ysi(zind+1,mind)*mdum + ysi(zind+1,mind+1)*(1.-mdum)
+        ysin = dum1*zdum + dum2*(1.-zdum)
+        
+        dum1= ys(zind,mind)*mdum + ys(zind,mind+1)*(1.-mdum)
+        dum2= ys(zind+1,mind)*mdum + ys(zind+1,mind+1)*(1.-mdum)
+        ysn = dum1*zdum + dum2*(1.-zdum)
+                  
+        dum1= yfe(zind,mind)*mdum + yfe(zind,mind+1)*(1.-mdum)
+        dum2= yfe(zind+1,mind)*mdum + yfe(zind+1,mind+1)*(1.-mdum)
+        yfen = dum1*zdum + dum2*(1.-zdum)
+
+        yhn = yhn * dum3
+        yhen= yhen* dum3
+        ycn = ycn * dum3
+        ynn = ynn * dum3
+        yon = yon * dum3
+        ymgn= ymgn* dum3
+        ysin= ysin* dum3
+        ysn = ysn * dum3
+        yfen= yfen* dum3
+
+c
+c 	 %123123 (end)
 c
 	yield2=yield2 + (zmass(l)-1.4)*sn(l)
 c        yield2=yield2 + (zmass(l)-yrmn)*sn(l)
@@ -4157,6 +4330,9 @@ c
         yiesi2 = yiesi2 + ysin * sn(l)
         yies2 = yies2 + ysn * sn(l)
         yiefe2 = yiefe2 + yfen * sn(l)
+        yiecD2 = yiecD2 + 0.5*ycn*sn(l)
+        aa=MIN(yon/(4d0*muO),ymgn/muMg,ysin/muSi,yfen/muFe) ! Olivine composition
+        yiesiD2=yiesiD2+0.8*aa*muSi*sn(l)
 c
 120	continue
 100	continue
@@ -4223,13 +4399,17 @@ c OF STARS MORE MASSIVE THAN 40 M ARE IDENTICAL TO THOSE OF 30 M. FORTUNATELY,
 c THESE STARS ARE RARE ENOUGH TO MAKE ONLY A SMALL CONTRIBUTION TO THE 
 c TOTAL SN YIELDS. 
 c
-	fakemass=cmass(l)
-	if (cmass(l).gt.40.) then
-	fakemass=30.
-	endif
+      fakemass=cmass(l)
+      if (cmass(l).gt.40.) then
+      fakemass=30.
+      endif
 c
 c LINEAR INTERPOLATION OF THE YIELDS RELATIVE TO A CERTAIN STELLAR MASS
 c
+     
+
+
+      
 	 do k=2,12
          if (fakemass.gt.ymass(kz,k-1).and.fakemass.le.ymass(kz,k)) then
             rmass=(fakemass-ymass(kz,k-1))/(ymass(kz,k)-ymass(kz,k-1))         
@@ -4438,6 +4618,7 @@ c
 c
 c LINEAR INTERPOLATION OF THE YIELDS RELATIVE TO A CERTAIN STELLAR MASS
 c
+
 	 do k=2,12
          if (fakemass.gt.ymass(kz,k-1).and.fakemass.le.ymass(kz,k)) then
             rmass=(fakemass-ymass(kz,k-1))/(ymass(kz,k)-ymass(kz,k-1))         
@@ -4486,7 +4667,7 @@ c
 c SUM OF THE CHEMICAL YIELDS FROM STELLAR WINDS AND SNEII
 c
    
-	yieh=yieh1+yieh2
+        yieh=yieh1+yieh2
         yiehe=yiehe1+yiehe2
         yiec=yiec1+yiec2
         yien=yien1+yien2
@@ -4495,6 +4676,12 @@ c
         yiesi=yiesi1+yiesi2
         yies=yies1+yies2
         yiefe=yiefe1+yiefe2
+        yiecD=yiecD1+yiecD2
+        yiesiD=yiesiD1+yiesiD2
+
+        !if(yiesiD2*muFe / muSi .GT. yiefe2) then
+        !        WRITE(4012,*) icount, yiesiD2, yiefe2
+        !endif
 c
       if (icount .eq. 1 ) then
            tmass = tmass + (yield*time_in)
@@ -4502,7 +4689,7 @@ c
           tmass = tmass + (yield*tstep)
       endif
 c    
-
+c 	  Mass correction due to Mejec != Total yield in SNII
         yield_cor = yieh2 + yiehe2 + yiec2 + yien2 + yieo2
         yield_cor = yield_cor + yiemg2 + yiesi2 + yies2 + yiefe2
 
@@ -4516,6 +4703,8 @@ c
           yiesi2 = yiesi2* yield2 / yield_cor
           yies2  = yies2 * yield2 / yield_cor
           yiefe2 = yiefe2* yield2 / yield_cor
+          yiecD2 = yiecD2* yield2 / yield_cor
+          yiesiD2 = yiesiD2 * yield2 / yield_cor
           !yieh2  = yieh2 * yield_cor / yield2
           !yiehe2 = yiehe2* yield_cor / yield2
           !yiec2  = yiec2 * yield_cor / yield2
@@ -4542,7 +4731,13 @@ c
      *    alog10(yies2+1.e-30),alog10(yiefe2+1.e-30),
      *    alog10(yield1+1.e-30),alog10(yield2+1.e-30),
      *    alog10(yield+1.e-30),alog10(tmass+1.e-30)
+	write(73,600)time_in,
+     *       alog10(yiecD1+1.e-30),
+     *       alog10(yiesiD1+1.e-30),
+     *       alog10(yiecD2+1.e-30),
+     *       alog10(yiesiD2+1.e-30)
 500    format(1x,e10.5,2x,18f13.8,2x,f13.8,2x,f13.8,2x,f13.8,2x,f13.8)
+600    format(1x,e10.5,2x,4f13.8)
 c
 c      	   write(930,600)
 c600 	   format('  <datarow>')
@@ -9472,9 +9667,9 @@ c
       common/yields/ymass,yrm,yh,yhe,yc,yn,yo,ymg,ysi,ys,yfe
       dimension xprof(12,100),yprof(12,100),xrange(26),
      *          gamma(26),
-     *          ymass(5,12),yrm(5,12),
-     *          yh(5,12),yhe(5,12),yc(5,12),yn(5,12),
-     *          yo(5,12),ymg(5,12),ysi(5,12),ys(5,12),yfe(5,12)
+     *          ymass(4,9),yrm(4,9),
+     *          yh(4,9),yhe(4,9),yc(4,9),yn(4,9),
+     *          yo(4,9),ymg(4,9),ysi(4,9),ys(4,9),yfe(4,9)
 c
 c
 c FILTER PROFILE FOR UIT_B1
@@ -9965,45 +10160,6 @@ c
      *       26.736,24.883,29.979,6.519,8.773,11.545,13.585,6.333,
      *       10.444,7.023,9.361,7.59,9.35,8.32,9.53,8.87,0./
 c
-c CHEMICAL YIELDS FROM SNII Z = 2 Zsol
-c
-        data ymass(5,1),yrm(5,1),yh(5,1),yhe(5,1),yc(5,1),yn(5,1),
-     *  yo(5,1),ymg(5,1),ysi(5,1),ys(5,1),yfe(5,1),
-     *  ymass(5,2),yrm(5,2),yh(5,2),yhe(5,2),yc(5,2),yn(5,2),
-     *  yo(5,2),ymg(5,2),ysi(5,2),ys(5,2),yfe(5,2),
-     *  ymass(5,3),yrm(5,3),yh(5,3),yhe(5,3),yc(5,3),yn(5,3),
-     *  yo(5,3),ymg(5,3),ysi(5,3),ys(5,3),yfe(5,3),
-     *  ymass(5,4),yrm(5,4),yh(5,4),yhe(5,4),yc(5,4),yn(5,4),
-     *  yo(5,4),ymg(5,4),ysi(5,4),ys(5,4),yfe(5,4),
-     *  ymass(5,5),yrm(5,5),yh(5,5),yhe(5,5),yc(5,5),yn(5,5),
-     *  yo(5,5),ymg(5,5),ysi(5,5),ys(5,5),yfe(5,5),
-     *  ymass(5,6),yrm(5,6),yh(5,6),yhe(5,6),yc(5,6),yn(5,6),
-     *  yo(5,6),ymg(5,6),ysi(5,6),ys(5,6),yfe(5,6),
-     *  ymass(5,7),yrm(5,7),yh(5,7),yhe(5,7),yc(5,7),yn(5,7),
-     *  yo(5,7),ymg(5,7),ysi(5,7),ys(5,7),yfe(5,7),
-     *  ymass(5,8),yrm(5,8),yh(5,8),yhe(5,8),yc(5,8),yn(5,8),
-     *  yo(5,8),ymg(5,8),ysi(5,8),ys(5,8),yfe(5,8),
-     *  ymass(5,9),yrm(5,9),yh(5,9),yhe(5,9),yc(5,9),yn(5,9),
-     *  yo(5,9),ymg(5,9),ysi(5,9),ys(5,9),yfe(5,9),
-     *  ymass(5,10),yrm(5,10),yh(5,10),yhe(5,10),yc(5,10),yn(5,10),
-     *  yo(5,10),ymg(5,10),ysi(5,10),ys(5,10),yfe(5,10),
-     *  ymass(5,11),yrm(5,11),yh(5,11),yhe(5,11),yc(5,11),yn(5,11),
-     *  yo(5,11),ymg(5,11),ysi(5,11),ys(5,11),yfe(5,11),
-     *  ymass(5,12),yrm(5,12),yh(5,12),yhe(5,12),yc(5,12),yn(5,12),
-     *  yo(5,12),ymg(5,12),ysi(5,12),ys(5,12),yfe(5,12)/
-     *  7,1.25,3.48,2.40,0.048,0.042,0.128,0.006,0.054,0.046,0.000,
-     *  9,1.25,4.47,3.08,0.062,0.054,0.164,0.008,0.070,0.059,0.000,
-     *  12,1.25,5.96,4.11,0.082,0.072,0.219,0.011,0.093,0.079,0.000,
-     *  13,1.63,6.32,4.51,0.115,0.094,0.275,0.023,0.062,0.028,0.111,
-     *  15,1.36,6.98,5.24,0.162,0.108,0.685,0.040,0.116,0.066,0.104,
-     *  18,1.84,7.89,6.28,0.249,0.114,1.146,0.077,0.146,0.059,0.050,
-     *  20,2.16,8.24,6.72,0.214,0.120,1.953,0.049,0.300,0.176,0.165,
-     *  22,1.91,8.79,7.51,0.242,0.134,2.385,0.062,0.382,0.190,0.383,
-     *  25,2.16,9.40,8.64,0.324,0.160,3.254,0.162,0.339,0.149,0.150,
-     *  30,5.88,10.50,10.40,0.288,0.208,3.652,0.270,0.141,0.016,0.058,
-     *  35,8.15,11.50,11.90,0.303,0.249,3.072,0.188,0.059,0.012,0.064,
-     *  40,11.68,11.10,13.00,0.315,0.281,2.361,0.124,0.031,0.011,0.064/
-c
 c CHEMICAL YIELDS FROM SNII Z = 1 Zsol
 c
         data ymass(4,1),yrm(4,1),yh(4,1),yhe(4,1),yc(4,1),yn(4,1),
@@ -10023,27 +10179,19 @@ c
      *  ymass(4,8),yrm(4,8),yh(4,8),yhe(4,8),yc(4,8),yn(4,8),
      *  yo(4,8),ymg(4,8),ysi(4,8),ys(4,8),yfe(4,8),
      *  ymass(4,9),yrm(4,9),yh(4,9),yhe(4,9),yc(4,9),yn(4,9),
-     *  yo(4,9),ymg(4,9),ysi(4,9),ys(4,9),yfe(4,9),
-     *  ymass(4,10),yrm(4,10),yh(4,10),yhe(4,10),yc(4,10),yn(4,10),
-     *  yo(4,10),ymg(4,10),ysi(4,10),ys(4,10),yfe(4,10),
-     *  ymass(4,11),yrm(4,11),yh(4,11),yhe(4,11),yc(4,11),yn(4,11),
-     *  yo(4,11),ymg(4,11),ysi(4,11),ys(4,11),yfe(4,11),
-     *  ymass(4,12),yrm(4,12),yh(4,12),yhe(4,12),yc(4,12),yn(4,12),
-     *  yo(4,12),ymg(4,12),ysi(4,12),ys(4,12),yfe(4,12)/
-     *  7,1.32,3.48,2.40,0.048,0.021,0.128,0.006,0.054,0.046,0.034,
-     *  9,1.32,4.47,3.08,0.062,0.027,0.164,0.008,0.070,0.059,0.044,
-     *  12,1.32,5.96,4.11,0.082,0.036,0.219,0.011,0.093,0.079,0.059,
-     *  13,1.46,6.32,4.51,0.115,0.047,0.275,0.023,0.062,0.028,0.151,
-     *  15,1.43,6.98,5.24,0.162,0.054,0.685,0.040,0.116,0.066,0.138,
-     *  18,1.76,7.89,6.28,0.249,0.057,1.146,0.077,0.146,0.059,0.093,
-     *  20,2.06,8.24,6.72,0.214,0.060,1.953,0.049,0.300,0.176,0.120,
-     *  22,2.02,8.79,7.51,0.242,0.067,2.385,0.062,0.382,0.190,0.241,
-     *  25,2.07,9.40,8.64,0.324,0.080,3.254,0.162,0.339,0.149,0.169,
-     *  30,4.24,10.50,10.40,0.288,0.104,3.652,0.270,0.141,0.016,0.029,
-     *  35,7.38,11.50,11.90,0.303,0.125,3.072,0.188,0.059,0.012,0.032,
-     *  40,10.34,11.10,13.00,0.315,0.141,2.361,0.124,0.031,0.011,0.032/
+     *  yo(4,9),ymg(4,9),ysi(4,9),ys(4,9),yfe(4,9)/
+     *  8 ,1.60,3.561,2.486,0.062,0.028,0.128,0.017,0.045,0.023,0.050,
+     *  10,1.60,4.673,3.262,0.082,0.036,0.168,0.023,0.059,0.030,0.066,
+     *  13,1.60,6.160,4.300,0.108,0.048,0.222,0.030,0.078,0.039,0.087,
+     *  15,1.50,6.790,5.250,0.066,0.062,0.165,0.041,0.089,0.036,0.090,
+     *  18,1.58,7.530,6.110,0.137,0.066,0.783,0.116,0.115,0.039,0.093,
+     *  20,1.55,7.930,6.760,0.246,0.072,1.056,0.095,0.068,0.030,0.094,
+     *  25,1.69,8.410,7.240,0.219,0.131,2.436,0.277,0.141,0.053,0.097,
+     *  30,2.10,8.750,8.360,0.252,0.102,3.228,0.247,0.258,0.112,0.104,
+     *  40,2.21,3.550,4.710,0.596,0.058,7.343,0.456,0.261,0.113,0.090/
+
 c
-c CHEMICAL YIELDS FROM SNII Z = 0.4 Zsol
+c CHEMICAL YIELDS FROM SNII Z = 0.2 Zsol
 c
         data ymass(3,1),yrm(3,1),yh(3,1),yhe(3,1),yc(3,1),yn(3,1),
      *  yo(3,1),ymg(3,1),ysi(3,1),ys(3,1),yfe(3,1),
@@ -10062,27 +10210,19 @@ c
      *  ymass(3,8),yrm(3,8),yh(3,8),yhe(3,8),yc(3,8),yn(3,8),
      *  yo(3,8),ymg(3,8),ysi(3,8),ys(3,8),yfe(3,8),
      *  ymass(3,9),yrm(3,9),yh(3,9),yhe(3,9),yc(3,9),yn(3,9),
-     *  yo(3,9),ymg(3,9),ysi(3,9),ys(3,9),yfe(3,9),
-     *  ymass(3,10),yrm(3,10),yh(3,10),yhe(3,10),yc(3,10),yn(3,10),
-     *  yo(3,10),ymg(3,10),ysi(3,10),ys(3,10),yfe(3,10),
-     *  ymass(3,11),yrm(3,11),yh(3,11),yhe(3,11),yc(3,11),yn(3,11),
-     *  yo(3,11),ymg(3,11),ysi(3,11),ys(3,11),yfe(3,11),
-     *  ymass(3,12),yrm(3,12),yh(3,12),yhe(3,12),yc(3,12),yn(3,12),
-     *  yo(3,12),ymg(3,12),ysi(3,12),ys(3,12),yfe(3,12)/
-     *  7,1.36,3.59,2.32,0.051,0.008,0.099,0.004,0.030,0.021,0.073,
-     *  9,1.36,4.62,2.98,0.065,0.011,0.127,0.006,0.038,0.027,0.094,
-     *  12,1.36,6.16,3.98,0.087,0.014,0.170,0.008,0.051,0.036,0.125,
-     *  13,1.36,6.55,4.37,0.111,0.019,0.285,0.020,0.065,0.031,0.175,
-     *  15,1.47,7.27,5.11,0.149,0.022,0.598,0.029,0.087,0.045,0.159,
-     *  18,1.71,8.20,6.21,0.233,0.023,1.045,0.079,0.135,0.052,0.119,
-     *  20,2.00,8.71,6.71,0.235,0.024,1.664,0.052,0.256,0.146,0.093,
-     *  22,2.09,9.22,7.45,0.235,0.027,2.208,0.033,0.347,0.189,0.156,
-     *  25,2.02,10.00,8.61,0.286,0.032,3.018,0.075,0.379,0.198,0.181,
-     *  30,3.25,11.10,10.47,0.299,0.042,3.957,0.309,0.100,0.007,0.011,
-     *  35,6.92,12.10,11.97,0.314,0.050,3.091,0.164,0.038,0.005,0.013,
-     *  40,9.53,12.57,13.67,0.330,0.057,2.600,0.097,0.016,0.005,0.013/
+     *  yo(3,9),ymg(3,9),ysi(3,9),ys(3,9),yfe(3,9)/
+     *  8 ,1.61, 3.67,2.325,0.051,0.005,0.223,0.026,0.036,0.016,0.043,
+     *  10,1.61, 4.81,3.053,0.066,0.007,0.292,0.035,0.047,0.020,0.057,
+     *  13,1.61, 6.37,4.040,0.088,0.009,0.387,0.046,0.062,0.027,0.075,
+     *  15,1.50, 7.11,4.950,0.088,0.013,0.293,0.078,0.105,0.036,0.075,
+     *  18,1.61, 7.47,6.060,0.165,0.126,0.574,0.084,0.101,0.043,0.094,
+     *  20,1.76, 8.95,7.030,0.098,0.018,0.995,0.101,0.127,0.053,0.078,
+     *  25,1.68,10.20,8.480,0.132,0.032,2.201,0.246,0.123,0.036,0.077,
+     *  30,2.56,10.10,7.920,0.182,0.020,4.790,0.232,0.403,0.192,0.083,
+     *  40,2.81,10.30,8.120,0.458,0.026,7.961,0.404,0.534,1.419,0.085/
+
 c
-c CHEMICAL YIELDS FROM SNII Z = 0.2 Zsol
+c CHEMICAL YIELDS FROM SNII Z = 0.05 Zsol
 c
         data ymass(2,1),yrm(2,1),yh(2,1),yhe(2,1),yc(2,1),yn(2,1),
      *  yo(2,1),ymg(2,1),ysi(2,1),ys(2,1),yfe(2,1),
@@ -10101,28 +10241,25 @@ c
      *  ymass(2,8),yrm(2,8),yh(2,8),yhe(2,8),yc(2,8),yn(2,8),
      *  yo(2,8),ymg(2,8),ysi(2,8),ys(2,8),yfe(2,8),
      *  ymass(2,9),yrm(2,9),yh(2,9),yhe(2,9),yc(2,9),yn(2,9),
-     *  yo(2,9),ymg(2,9),ysi(2,9),ys(2,9),yfe(2,9),
-     *  ymass(2,10),yrm(2,10),yh(2,10),yhe(2,10),yc(2,10),yn(2,10),
-     *  yo(2,10),ymg(2,10),ysi(2,10),ys(2,10),yfe(2,10),
-     *  ymass(2,11),yrm(2,11),yh(2,11),yhe(2,11),yc(2,11),yn(2,11),
-     *  yo(2,11),ymg(2,11),ysi(2,11),ys(2,11),yfe(2,11),
-     *  ymass(2,12),yrm(2,12),yh(2,12),yhe(2,12),yc(2,12),yn(2,12),
-     *  yo(2,12),ymg(2,12),ysi(2,12),ys(2,12),yfe(2,12)/
-     *  7,1.37,3.63,2.29,0.051,0.004,0.089,0.004,0.022,0.012,0.086,
-     *  9,1.37,4.67,2.95,0.066,0.005,0.115,0.005,0.028,0.016,0.110,
-     *  12,1.37,6.23,3.93,0.088,0.007,0.153,0.007,0.037,0.021,0.147,
-     *  13,1.33,6.63,4.32,0.110,0.009,0.288,0.019,0.066,0.032,0.183,
-     *  15,1.48,7.37,5.06,0.144,0.011,0.569,0.025,0.077,0.038,0.166,
-     *  18,1.70,8.31,6.19,0.228,0.012,1.012,0.080,0.132,0.050,0.128,
-     *  20,1.98,8.87,6.70,0.242,0.012,1.568,0.053,0.241,0.136,0.084,
-     *  22,2.11,9.37,7.43,0.233,0.014,2.149,0.024,0.335,0.189,0.127,
-     *  25,2.00,10.20,8.60,0.273,0.016,2.939,0.046,0.392,0.215,0.184,
-     *  30,2.92,11.30,10.49,0.302,0.021,4.059,0.322,0.086,0.004,0.006,
-     *  35,6.77,12.30,11.99,0.317,0.026,3.097,0.156,0.031,0.003,0.006,
-     *  40,9.26,13.06,13.89,0.335,0.029,2.680,0.088,0.011,0.003,0.006/
+     *  yo(2,9),ymg(2,9),ysi(2,9),ys(2,9),yfe(2,9)/
+     *  8 ,1.65, 3.65, 2.19,0.061,0.005,0.287,0.037,0.053,0.022,0.043,
+     *  10,1.65, 4.80, 2.88,0.080,0.007,0.377,0.049,0.069,0.028,0.057,
+     *  13,1.65, 6.44, 3.86,0.107,0.009,0.506,0.066,0.093,0.038,0.076,
+     *  15,1.53, 7.45, 5.16,0.085,0.004,0.294,0.066,0.044,0.017,0.073,
+     *  18,1.70, 8.46, 6.54,0.130,0.004,0.422,0.061,0.154,0.080,0.074,
+     *  20,1.85, 8.43, 5.94,0.128,0.013,2.180,0.247,0.130,0.057,0.074,
+     *  25,1.91, 9.80, 6.97,0.215,0.009,3.820,0.183,0.121,0.055,0.074,
+     *  30,2.06,11.10, 8.38,0.121,0.006,5.330,0.294,0.167,0.079,0.075,
+     *  40,3.17,12.90,10.90,0.074,0.009,8.370,0.707,0.897,0.332,0.083/
+
 c
-c CHEMICAL YIELDS FROM SNII Z = 0.05 Zsol
+c CHEMICAL YIELDS FROM SNII Z = 0.00 Zsol
 c
+c       Here, these tables won't be used because there is no stellar
+c       track with this metallicity.
+c       Anyway, the values of SNII with 7 - 12 Msun is employed from
+c       the WW 95 tables with Z = 0.05 Zsol
+
         data ymass(1,1),yrm(1,1),yh(1,1),yhe(1,1),yc(1,1),yn(1,1),
      *  yo(1,1),ymg(1,1),ysi(1,1),ys(1,1),yfe(1,1),
      *  ymass(1,2),yrm(1,2),yh(1,2),yhe(1,2),yc(1,2),yn(1,2),
@@ -10140,25 +10277,25 @@ c
      *  ymass(1,8),yrm(1,8),yh(1,8),yhe(1,8),yc(1,8),yn(1,8),
      *  yo(1,8),ymg(1,8),ysi(1,8),ys(1,8),yfe(1,8),
      *  ymass(1,9),yrm(1,9),yh(1,9),yhe(1,9),yc(1,9),yn(1,9),
-     *  yo(1,9),ymg(1,9),ysi(1,9),ys(1,9),yfe(1,9),
-     *  ymass(1,10),yrm(1,10),yh(1,10),yhe(1,10),yc(1,10),yn(1,10),
-     *  yo(1,10),ymg(1,10),ysi(1,10),ys(1,10),yfe(1,10),
-     *  ymass(1,11),yrm(1,11),yh(1,11),yhe(1,11),yc(1,11),yn(1,11),
-     *  yo(1,11),ymg(1,11),ysi(1,11),ys(1,11),yfe(1,11),
-     *  ymass(1,12),yrm(1,12),yh(1,12),yhe(1,12),yc(1,12),yn(1,12),
-     *  yo(1,12),ymg(1,12),ysi(1,12),ys(1,12),yfe(1,12)/
-     *  7,1.39,3.66,2.28,0.052,0.001,0.084,0.004,0.018,0.008,0.095,
-     *  9,1.39,4.71,2.93,0.067,0.001,0.107,0.005,0.023,0.011,0.122,
-     *  12,1.39,6.28,3.90,0.090,0.001,0.143,0.006,0.031,0.014,0.163,
-     *  13,1.38,6.69,4.29,0.109,0.002,0.246,0.014,0.053,0.026,0.189,
-     *  15,1.53,7.46,5.07,0.146,0.003,0.482,0.022,0.073,0.035,0.171,
-     *  18,1.63,8.48,6.22,0.208,0.003,0.971,0.056,0.114,0.053,0.134,
-     *  20,1.98,9.02,6.66,0.225,0.003,1.576,0.033,0.240,0.142,0.077,
-     *  22,2.08,9.57,7.46,0.241,0.004,2.020,0.041,0.321,0.167,0.106,
-     *  25,1.92,10.36,8.69,0.274,0.004,2.861,0.036,0.393,0.215,0.187,
-     *  30,3.02,11.51,10.39,0.310,0.005,4.038,0.289,0.101,0.003,0.001,
-     *  35,5.98,12.62,12.00,0.332,0.007,3.417,0.169,0.023,0.001,0.001,
-     *  40,9.10,13.52,13.94,0.339,0.008,2.659,0.080,0.006,0.001,0.001/
+     *  yo(1,9),ymg(1,9),ysi(1,9),ys(1,9),yfe(1,9)/
+     *  8 ,1.57, 3.72, 2.26,0.042,0.001032,0.254,0.049,0.047,0.014,
+     *  0.041,
+     *  10,1.57, 4.88, 2.97,0.055,0.001353,0.333,0.064,0.061,0.018,
+     *  0.053,
+     *  13,1.57, 6.60, 4.01,0.074,0.001830,0.450,0.086,0.083,0.024,
+     *  0.072,
+     *  15,1.48, 7.58, 4.40,0.172,0.001860,0.773,0.069,0.074,0.032,
+     *  0.072,
+     *  18,1.6,5, 8.43, 5.42,0.219,0.000189,1.380,0.158,0.117,0.041,
+     *  0.072
+     *  20,1.66, 8.77, 5.94,0.211,0.000054,2.110,0.150,0.100,0.054,
+     *  0.072,
+     *  25,1.92,10.60, 8.03,0.294,0.000591,2.790,0.120,0.351,0.186,
+     *  0.074,
+     *  30,2.07,11.70, 9.52,0.338,0.000002,4.810,0.227,0.249,0.116,
+     *  0.075,
+     *  40,2.89,14.00,11.90,0.429,0.000001,8.380,0.479,1.037,0.375,
+     *  0.080/
 	end
 c
 c *****************************************************************************

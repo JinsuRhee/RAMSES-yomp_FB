@@ -120,24 +120,25 @@ PRO p1_maketbl, settings
 	;;-----
 	;; LOAD TABLE
 	;;-----
-	IF settings.p1_tbltype EQ 's99org_kp' THEN BEGIN
-		RESTORE, settings.dir_save + 'swind_s99org_kp_pagb.sav'
-		suffix	= 's99org_kp_pagb.dat'
-	ENDIF ELSE IF settings.p1_tbltype EQ 's99org_cb' THEN BEGIN
-		RESTORE, settings.dir_save + 'swind_s99org_cb_pagb.sav'
-		suffix	= 's99org_cb_pagb.dat'
-		IF settings.p1_dust EQ 'on' THEN suffix	= 's99org_cb_pagb_ydust2.dat'
-	ENDIF ELSE IF settings.p1_tbltype EQ 'yohan_cb' THEN BEGIN
-		RESTORE, settings.dir_save + 'swind_yohan_cb_pagb.sav'
-		tmp     = 'array = array.' + STRTRIM(settings.p1_tbltype_vrot,2)
-		void	= EXECUTE(tmp)
-		suffix	= 'yohan_cb_pagb_' + STRTRIM(settings.p1_tbltype_vrot,2) + '.dat'
-	ENDIF ELSE BEGIN
-		PRINT, 'TABLE HAS NOT BEEN IMPLEMENTED YET'
-		DOC_LIBRARY, 'p1_maketbl'
-		STOP
-	ENDELSE
-
+	;IF settings.p1_tbltype EQ 's99org_kp' THEN BEGIN
+	;	RESTORE, settings.dir_save + 'swind_s99org_kp_pagb.sav'
+	;	suffix	= 's99org_kp_pagb.dat'
+	;ENDIF ELSE IF settings.p1_tbltype EQ 's99org_cb' THEN BEGIN
+	;	RESTORE, settings.dir_save + 'swind_s99org_cb_pagb.sav'
+	;	suffix	= 's99org_cb_pagb.dat'
+	;	IF settings.p1_dust EQ 'on' THEN suffix	= 's99org_cb_pagb_ydust_added.dat'
+	;ENDIF ELSE IF settings.p1_tbltype EQ 'yohan_cb' THEN BEGIN
+	;	RESTORE, settings.dir_save + 'swind_yohan_cb_pagb.sav'
+	;	tmp     = 'array = array.' + STRTRIM(settings.p1_tbltype_vrot,2)
+	;	void	= EXECUTE(tmp)
+	;	suffix	= 'yohan_cb_pagb_' + STRTRIM(settings.p1_tbltype_vrot,2) + '.dat'
+	;ENDIF ELSE BEGIN
+	;	PRINT, 'TABLE HAS NOT BEEN IMPLEMENTED YET'
+	;	DOC_LIBRARY, 'p1_maketbl'
+	;	STOP
+	;ENDELSE
+	RESTORE, settings.dir_data + '/table.sav'
+	
 	;;-----
 	;; Time Range
 	;;-----
@@ -153,6 +154,9 @@ PRO p1_maketbl, settings
 	array	= {t:array.t(tcut), $
 		z:array.z, $
 		cyield_wn:array.cyield_wn(*,tcut,*), $
+		cdyield_wn:array.cdyield_wn(*,tcut,*), cdyield_sn:array.cdyield_sn(*,tcut,*), $
+		yield_wn:array.yield_wn(*,tcut,*), dyield_wn:array.dyield_wn(*,tcut,*), $
+		yield_sn:array.yield_sn(*,tcut,*), dyield_sn:array.dyield_sn(*,tcut,*), $
 		cml_wn:array.cml_wn(*,tcut), $
 		en_wn:array.en_wn(*,tcut)}
 
@@ -160,23 +164,129 @@ PRO p1_maketbl, settings
 	;; MAKE DUST TABLE
 	;;-----
 	IF settings.p1_dust EQ 'on' THEN BEGIN
-		ydust	= p1_maketbl_rd(settings)
-		dust	= p1_maketbl_gendust(settings, ydust, array)
+		FOR i=0L, 4L DO BEGIN
+			a	= array.yield_wn(i,*,5)
+			b	= array.dyield_wn(i,*,1) / 0.163d * 0.141d
+			cut	= WHERE(a - b LT 0. AND a GT 1e-30, ncut)
+			IF ncut GE 1L THEN BEGIN
+				PRINT, MIN(a-b), ncut, a(cut(0)), b(cut(0))
+				STOP
+			ENDIF
 
-		;; Set upper limits to dust not to exceed wind yield
-		;;	Dust yield cannot be greater than 99% of stellar wind
-		FOR i=0L, N_ELEMENTS(array.z)-1L DO BEGIN
-			;; For C dust
-			dust(*,i,1)	= ALOG10( 10.^dust(*,i,1) < array.cyield_wn(i,*,2)*0.99 )
+			a	= array.yield_wn(i,*,8)
+			b	= array.dyield_wn(i,*,1) / 0.163d * 0.324d
+			cut	= WHERE(a - b LT 0. AND a GT 1e-30, ncut)
+			IF ncut GE 1L THEN BEGIN
+				PRINT, MIN(a-b), ncut, a(cut(0)), b(cut(0))
+				STOP
+			ENDIF
 
-			;; For Si dust
-			;; 	TODO
-			;PRINT, i, MIN(array.cyield_wn(i,*,2) - 10.^dust(*,i,1))
-			;PRINT, i, MIN(array.cyield_wn(i,*,5) - 10.^dust(*,i,2)*0.141d)
-			;PRINT, i, MIN(array.cyield_wn(i,*,8) - 10.^dust(*,i,2)*0.324d)
-			;PRINT, i, MIN(array.cyield_wn(i,*,6) - 10.^dust(*,i,2)*0.163d)
-			;PRINT, i, MIN(array.cyield_wn(i,*,4) - 10.^dust(*,i,2)*0.372d)
+			a	= array.yield_wn(i,*,6)
+			b	= array.dyield_wn(i,*,1) / 0.163d * 0.163d
+			cut	= WHERE(a - b LT 0. AND a GT 1e-30, ncut)
+			IF ncut GE 1L THEN BEGIN
+				PRINT, MIN(a-b), ncut, a(cut(0)), b(cut(0))
+				STOP
+			ENDIF
+
+			a	= array.yield_wn(i,*,4)
+			b	= array.dyield_wn(i,*,1) / 0.163d * 0.372d
+			cut	= WHERE(a - b LT 0. AND a GT 1e-30, ncut)
+			IF ncut GE 1L THEN BEGIN
+				PRINT, MIN(a-b), ncut, a(cut(0)), b(cut(0))
+				STOP
+			ENDIF
+
+			a	= array.yield_wn(i,*,2)
+			b	= array.dyield_wn(i,*,0)
+			cut	= WHERE(a - b LT 0. AND a GT 1e-30, ncut)
+			IF ncut GE 1L THEN BEGIN
+				PRINT, MIN(a-b), ncut, a(cut(0)), b(cut(0))
+				STOP
+			ENDIF
+
+			;; SN
+			a	= array.yield_sn(i,*,5)
+			;b	= array.dyield_sn(i,*,1) * 0.163d * 0.141d
+			b	= array.dyield_sn(i,*,1) * 0.141d / 0.163d
+			cut	= WHERE(a - b LT 0. AND a GT 1e-30, ncut)
+			IF ncut GE 1L THEN BEGIN
+				PRINT, 'Mg', MIN(a-b), ncut, a(cut(0)), b(cut(0))
+				STOP
+			ENDIF
+
+			a	= array.yield_sn(i,*,8)
+			;b	= array.dyield_sn(i,*,1) * 0.163d * 0.324d
+			b	= array.dyield_sn(i,*,1) * 0.324d / 0.163d
+			cut	= WHERE(a - b LT 0. AND a GT 1e-30, ncut)
+			IF ncut GE 1L THEN BEGIN
+				PRINT, 'Fe', MIN(a-b), ncut, a(cut(0)), b(cut(0))
+				STOP
+			ENDIF
+
+			a	= array.yield_sn(i,*,6)
+			;b	= array.dyield_sn(i,*,1) * 0.163d * 0.163d
+			b	= array.dyield_sn(i,*,1) * 0.163d / 0.163d
+			cut	= WHERE(a - b LT 0. AND a GT 1e-30, ncut)
+			IF ncut GE 1L THEN BEGIN
+				PRINT, 'Si', MIN(a-b), ncut, a(cut(0)), b(cut(0))
+				STOP
+			ENDIF
+
+			a	= array.yield_sn(i,*,4)
+			;b	= array.dyield_sn(i,*,1) * 0.163d * 0.372d
+			b	= array.dyield_sn(i,*,1) * 0.372d / 0.163d
+			cut	= WHERE(a - b LT 0. AND a GT 1e-30, ncut)
+			IF ncut GE 1L THEN BEGIN
+				PRINT, 'O', MIN(a-b), ncut, a(cut(0)), b(cut(0))
+				STOP
+			ENDIF
+
+			a	= array.yield_sn(i,*,2)
+			b	= array.dyield_sn(i,*,0)
+			cut	= WHERE(a - b LT 0. AND a GT 1e-30, ncut)
+			IF ncut GE 1L THEN BEGIN
+				PRINT, MIN(a-b), ncut, a(cut(0)), b(cut(0))
+				STOP
+			ENDIF
+
+			
 		ENDFOR
+		;STOP
+		;; Test Ver
+;		ydust	= p1_maketbl_rd(settings)
+;		dust	= p1_maketbl_gendust(settings, ydust, array)
+;
+;		;; Set upper limits to dust not to exceed wind yield
+;		;;	Dust yield cannot be greater than 99% of stellar wind
+;		;;	-- (Aborted)
+;		;;
+;		;; Add dust yield to the stellar wind yield
+;		FOR i=0L, N_ELEMENTS(array.z)-1L DO BEGIN
+;			;; For C dust
+;			lin_dust	= 10.d^dust(*,i,1)
+;			del_dust	= [lin_dust(0),lin_dust(1L:*) - lin_dust(0L:-2L)] > 0.d		;; Remove negative yields
+;			lin_dust	= TOTAL(del_dust, /cumulative)
+;			
+;			dust(*,i,1)	= ALOG10(lin_dust)
+;			array.cyield_wn(i,*,2)	+= lin_dust
+;
+;		        ;cgPlot, array.t, array.cyield_wn(i,*,2), linestyle=0, thick=4, /xlog, /ylog, yrange=[1e-8, 1e-2]
+;		        ;cgOplot, array.t, a, linestyle=0, thick=2, color='red'
+;
+;			;; For Si dust
+;			;;	Yohan table gives Si mass in Si dust so that /0.163 gives the total Si dust mass
+;			lin_dust	= 10.d^dust(*,i,2)
+;			del_dust	=  [lin_dust(0),lin_dust(1L:*) - lin_dust(0L:-2L)] > 0.d	;; Remove negative yields
+;			lin_dust	= TOTAL(del_dust, /cumulative)
+;
+;			dust(*,i,2)	= ALOG10(lin_dust)
+;
+;			array.cyield_wn(i,*,5)	+= lin_dust/0.163d*0.141d
+;			array.cyield_wn(i,*,8) 	+= lin_dust/0.163d*0.324d
+;			array.cyield_wn(i,*,6) 	+= lin_dust/0.163d*0.163d
+;			array.cyield_wn(i,*,4) 	+= lin_dust/0.163d*0.372d
+;		ENDFOR
 
 		;; Reduce the original yield with the amount of dust
 		;; 	RAMSES does treat chemical yield including dust
@@ -207,7 +317,8 @@ PRO p1_maketbl, settings
 	;; MAKE TABLE IN A RAMSES-NEEDED FORMAT
 	;;-----
 	nchem	= N_ELEMENTS(array.cyield_wn(0,0,*))
-	fname	= settings.dir_save + suffix
+	;fname	= settings.dir_save + suffix
+	fname	= settings.dir_data + '/windtable.dat'
 	OPENW, 10, fname, /f77_unformatted
 
 	;;HEADER
@@ -252,17 +363,20 @@ PRO p1_maketbl, settings
 		;dust	= p1_maketbl_gendust(settings, ydust, array)
 
 		FOR i=0L, nz_SW - 1L DO BEGIN ;; Total dust mass
-			WRITEU, 10, dust(*,i,0)
+			;WRITEU, 10, dust(*,i,0)
+			WRITEU, 10, DOUBLE(ALOG10(array.cdyield_wn(i,*,0) + array.cyield_wn(i,*,1) + 2e-30))
 		ENDFOR
 
 		FOR i=0L, nz_SW - 1L DO BEGIN ;; Total C dust mass 
-			WRITEU, 10, dust(*,i,1)
+			;WRITEU, 10, dust(*,i,1)
+			WRITEU, 10, DOUBLE(ALOG10(array.cdyield_wn(i,*,0)+1e-30))
 		ENDFOR	
 
 		FOR i=0L, nz_SW - 1L DO BEGIN ;; Total Si dust mass 
-			WRITEU, 10, dust(*,i,2)
+			;WRITEU, 10, dust(*,i,2)
+			WRITEU, 10, DOUBLE(ALOG10(array.cdyield_wn(i,*,1)+1e-30))
 		ENDFOR
 	ENDIF
 	CLOSE, 10
-
+	STOP
 END

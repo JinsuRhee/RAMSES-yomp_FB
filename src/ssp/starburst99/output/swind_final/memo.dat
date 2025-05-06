@@ -1,0 +1,13 @@
+Chabrier IMF
+
+Dust Yield
+	Wind (only iz=41 bin boosted)
+	SN (No boost)
+
+SN Table
+	Kobayashi+06 only
+	The lowest metallicity bin extrapolated from M_zams=13 bin (linear scaling)
+	Metalicity interpolation routine fixed (in order to use the exact metalicity values)
+
+No mass correction for SN remnant mass
+	Fixed to be 1.4 Msun

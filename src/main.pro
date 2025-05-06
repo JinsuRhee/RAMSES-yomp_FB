@@ -20,12 +20,18 @@ Pro main
 	settings = create_struct(settings, 'root_path', root_path)
 
 	;;-----
+	;; TBL TYPE
+	;;-----
+	p_tbltypeset, settings
+
+	;;-----
 	;; Data processing
 	;;-----
-	IF settings.p_s99org_kp_pagb EQ 1L THEN p_s99org_kp_pagb, settings
-	IF settings.p_s99org_cb_pagb EQ 1L THEN p_s99org_cb_pagb, settings
-	IF settings.p_s99orgsn_kp_pagb EQ 1L THEN p_s99orgsn_kp_pagb, settings
-	IF settings.p_s99ts_kp_pagb EQ 1L THEN p_s99ts_kp_pagb, settings
+	IF settings.p_rdraw EQ 1L THEN p_rdraw, settings
+	;IF settings.p_s99org_kp_pagb EQ 1L THEN p_s99org_kp_pagb, settings
+	;IF settings.p_s99org_cb_pagb EQ 1L THEN p_s99org_cb_pagb, settings
+	;IF settings.p_s99orgsn_kp_pagb EQ 1L THEN p_s99orgsn_kp_pagb, settings
+	;IF settings.p_s99ts_kp_pagb EQ 1L THEN p_s99ts_kp_pagb, settings
 	IF settings.p_yohan EQ 1L THEN p_yohan, settings
 
 	;;-----
@@ -33,6 +39,7 @@ Pro main
 	;;-----
 	IF settings.p1_maketbl EQ 1L THEN p1_maketbl, settings
 	IF settings.p2_sntable EQ 1L THEN p2_sntable, settings
+	IF settings.p3_gce EQ 1L THEN p3_gce, settings
 
 	;;-----
 	;; Tests
@@ -47,6 +54,7 @@ Pro main
 	IF Settings.Test8 EQ 1L THEN test8, settings
 	IF Settings.Test9 EQ 1L THEN test9, settings
 	IF Settings.Test10 EQ 1L THEN test10, settings
+	IF Settings.Test11 EQ 1L THEN test11, settings
 	STOP	
 
 End

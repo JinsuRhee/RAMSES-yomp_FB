@@ -2,7 +2,7 @@
 # Makefile for the code GALAXY
 # - version Sun Solaris (1997)
 #------------------------------------------------------
-SOURCES = galaxy.f#_wonly_js.f
+SOURCES = galaxy_nboost.f
 
 OBJECTS = $(SOURCES:.f=.o)
 
@@ -28,6 +28,6 @@ LINK   = gfortran
 
 #------------------------------------------------------
 galaxy: $(OBJECTS) Makefile
-	$(LINK) $(LFLAGS) $(OBJECTS) -o galaxy $(LIBS)
+	$(LINK) $(LFLAGS) $(OBJECTS) -o galaxy_nboost $(LIBS)
 
 $(OBJECTS): $(INCLUDES)

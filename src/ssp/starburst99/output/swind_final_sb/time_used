@@ -1,0 +1,8 @@
+Job on gc10 started at Thu Mar 24 09:01:55 KST 2022
+ 
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+26.96user 0.13system 0:27.10elapsed 99%CPU (0avgtext+0avgdata 73284maxresident)k
+0inputs+137560outputs (0major+25907minor)pagefaults 0swaps
+ 
+Save synthesis-files to m45/standard.*1
+Done at Thu Mar 24 09:02:22 KST 2022

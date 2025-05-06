@@ -1,0 +1,59 @@
+FUNCTION p3_gc3_getsfr, set, t
+	N	= set.galmass / set.mstar
+	a	= N / (set.SFH_tau^2*(1.d - EXP(-set.maxT/set.SFH_tau)) - set.SFH_tau*set.maxT*EXP(-set.maxT / set.SFH_tau))
+	RETURN, a * t * EXP(-t / set.SFH_tau)
+END
+FUNCTION p3_gce_gengal, set
+	n_step	= LONG(set.maxT / set.delT)
+	gprop	= {mass:0.d, Z:0.d, n_star:0L}
+	gprop	= REPLICATE(gprop, n_step)
+
+	RETURN, gprop
+END
+FUNCTION p3_gce_settings, settings
+
+	set	= {$
+		delT:1e4, minT:0.d, maxT:1e10, delT_log:1.0e9, $
+		galmass:5e10, $
+		mstar:1e4, $
+
+		;; SFH
+		SFH_tau:4.0e9, $
+
+		;; Others
+		Nstep:0L, $
+		Nlog:0L $
+			
+	}
+	set.Nstep	= LONG(set.maxT / set.delT)
+	set.Nlog	= LONG(set.Nstep / set.maxT / set.delT_log)
+END
+
+
+PRO p3_gce, settings
+
+	set	= p3_gce_settings(settings)
+	gprop	= p3_gce_gengal(set)
+	stars	= p3_gc3_genstar(set)
+
+	;; Run
+	t_curr	= set.minT
+	FOR i=1L, set.Nstep-1L DO BEGIN
+		t_curr	+= set.delT
+
+		;; STAR FORMATION
+		n_newstar	= LONG(p3_gc3_getsfr(set, t_curr) * set.delT)
+
+		;; SAVE
+		gprop(i).mass	= gprop(i-1).mass + n_newstar * set.mstar
+
+		;; LOG
+		IF i MOD set.Nlog EQ 0L THEN BEGIN
+			PRINT, '%123123'
+			PRINT, ' T = ', t_curr
+			PRINT, ' Gal Mass = ', gprop(i).mass
+		ENDIF
+	ENDFOR
+	STOP
+
+END

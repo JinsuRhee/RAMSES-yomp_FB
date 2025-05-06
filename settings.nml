@@ -10,16 +10,31 @@ num_thread	= 20L
 dir_save	= '/storage6/jinsu/var/YOMP_NewFB/'
 
 ##-----
+## SSP TABLE TYPE
+##-----
+ssptype 	= 'final_nboost'	;; sb99, yohan, final, final_nboost, final_db
+tracktype	= 'pagb'	;; pagb, v0, v300
+imftype		= 'cb'		;; kp, cb
+sntype		= 'cknomc'	;; ww, wwck, ck (nomc)
+dusttype	= 'dustboost'	;; nodust, dust, dustboost
+		
+
+##-----
 ## SSP Data processing (1 on / others off)
 ##	- This routine does a post-processing of STARBURST99 (or Yohan's) yield data
 ##-----
+p_rdraw 	= 2L
+
+
 p_s99org_kp_pagb	= 2L
 	dir_s99org_kp_pagb	= '/home/jinsu/RAMSES-yomp_FB/data/starburst99/kp_pagb/'
 	Z_s99org_kp_pagb= [0.0004, 0.004, 0.008, 0.020, 0.050]
 
 p_s99org_cb_pagb	= 2L
 	#dir_s99org_cb_pagb	= '/home/jinsu/RAMSES-yomp_FB/data/starburst99/cb_pagb/'
-	dir_s99org_cb_pagb	= '/home/jinsu/RAMSES-yomp_FB/data/starburst99/cb_pagb_20_100/'
+	#dir_s99org_cb_pagb	= '/home/jinsu/RAMSES-yomp_FB/data/starburst99/cb_pagb_20_100/'
+	#dir_s99org_cb_pagb	= '/home/jinsu/dev/RAMSES-yomp_FB/data/starburst99/cb_pagb_20_100/'
+	dir_s99org_cb_pagb	= '/home/jinsu/dev/RAMSES-yomp_FB/data/starburst99/cb_pagb/'
 	Z_s99org_cb_pagb= [0.0004, 0.004, 0.008, 0.020, 0.050]
 
 p_s99orgsn_kp_pagb	= 2L
@@ -34,7 +49,7 @@ p_yohan			= 2L
 #		Generate Yohan's yield table
 	p_yohan_gen	= 2L
 #		Post-processing it
-	p_yohan_pp	= 2L
+	p_yohan_pp	= 1L
 		p_yohan_elemlist = ['H', 'He', 'C', 'N', 'O', 'F', 'Ne', 'Mg', 'Si', 'S', 'Fe']
 
 ##-----
@@ -44,7 +59,7 @@ p_yohan			= 2L
 #		s99org_cb
 #		s99org_kp
 #		yohan_cb
-p1_maketbl	= 1L
+p1_maketbl	= 2L
 	#p1_tbltype	= 'yohan_cb'
 	p1_tbltype	= 's99org_cb'
 		p1_dust	= 'on'
@@ -61,6 +76,7 @@ p2_sntable	= 2L
 	#p2_tbltype	= 's99org_cb'
 	#p2_tbltype	= 's99org_kp'
 
+p3_gce		= 2L
 ##-----
 ## Tests
 ##-----
@@ -72,7 +88,8 @@ test5	= 2L		;; IMF test
 test6	= 2L		;; IMF test2
 test7	= 2L		;; SN Table
 test8	= 2L		;; Table sanity check (O vs. Mg)
-test9	= 2L		;; IMF
-test10	= 1L		;; SANITY CHECK
+test9	= 1L		;; IMF
+test10	= 2L		;; SANITY CHECK
+test11 	= 2L		;; Yield results figure with different tables
 ##-----
 ## LIST OF CALL FUNCTIONS##-----

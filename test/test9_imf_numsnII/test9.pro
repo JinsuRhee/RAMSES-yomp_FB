@@ -41,10 +41,11 @@ PRO test9, settings
 	cgPlot, mass, my, linestyle=0, /xlog, /ylog, xrange=[0.1, 110.]
 
 	mm=[0.d]
-	qsimp, 'test9_mass', 8., 50., mm
-	qsimp, 'test9_num', 8., 13., nn
+	qsimp, 'test9_mass', 8., 40., mm
+	qsimp, 'test9_num', 8., 40., nn
 
 	PRINT, mm, nn
+	PRINT, nn/10000.
 	STOP
 
 

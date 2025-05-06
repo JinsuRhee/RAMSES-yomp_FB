@@ -88,6 +88,7 @@ IF settings.p_yohan_pp EQ 1L THEN BEGIN
 	time	= DBLARR(ntime)
 	yield_wn= DBLARR(nrot,nmetal,ntime,nelem)
 	yield_sn= DBLARR(nrot,nmetal,ntime,nelem)
+	dyield	= DBLARR(nrot,nmetal,ntime,2)
 	ml_wn	= DBLARR(nrot,nmetal,ntime)
 	ml_sn	= DBLARR(nrot,nmetal,ntime)
 	en_wn	= DBLARR(nrot,nmetal,ntime)
@@ -109,9 +110,9 @@ IF settings.p_yohan_pp EQ 1L THEN BEGIN
 			file	= FILE_SEARCH(file)
 
 			str	= 'readcol, file, t1, m1'
-			FOR i=0L, nelem-1L DO str = str + ', e' + STRTRIM(i,2)
+			FOR i=0L, nelem*2L-1L DO str = str + ', e' + STRTRIM(i,2)
 			str	= str + ', format="(D, D' 
-			FOR i=0L, nelem-1L DO str = str + ', D'
+			FOR i=0L, nelem*2L-1L DO str = str + ', D'
 			str	= str + ')", numline=FILE_LINES(file), skipline=3L'
 			void	= EXECUTE(str)
 
@@ -131,6 +132,8 @@ IF settings.p_yohan_pp EQ 1L THEN BEGIN
 				str	= 'yield_sn(ri,zi,*,ei) = ' + 'e' + STRTRIM(ei,2)
 				void	= EXECUTE(str)
 			ENDFOR
+			dyield(ri,zi,*,0)	= e13
+			dyield(ri,zi,*,1)	= e19
 
 			;;-----
 			;; READ WN YIELD
@@ -197,6 +200,7 @@ IF settings.p_yohan_pp EQ 1L THEN BEGIN
 	FOR ri=0L, nrot-1L DO BEGIN
 		cyield_wn	= REFORM(yield_wn(ri,*,*,*),nmetal,ntime,nelem)
 		cyield_sn	= REFORM(yield_sn(ri,*,*,*),nmetal,ntime,nelem)
+		cdyield		= REFORM(dyield(ri,*,*,*),nmetal,ntime,2L)
 		cyield_sn	= cyield_sn - cyield_wn
 
 		cml_wn	= REFORM(ml_wn(ri,*,*),nmetal,ntime)
@@ -205,6 +209,7 @@ IF settings.p_yohan_pp EQ 1L THEN BEGIN
 
 		cyield_wn	= cyield_wn(metal_rearr,*,*)
 		cyield_sn	= cyield_sn(metal_rearr,*,*)
+		cdyield		= cdyield(metal_rearr,*,*)
 		cml_wn		= cml_wn(metal_rearr,*)
 		cml_sn		= cml_sn(metal_rearr,*)
 
@@ -229,7 +234,7 @@ IF settings.p_yohan_pp EQ 1L THEN BEGIN
 
 		;	tprev	= time(ti)
 		;ENDFOR
-		dumstr	= {T:time, Z:zmet, cyield_wn:cyield_wn, cyield_sn:cyield_sn, $
+		dumstr	= {T:time, Z:zmet, cyield_wn:cyield_wn, cyield_sn:cyield_sn, cdyield:cdyield, $
 			;yield_wn:REFORM(yield_wn(ri,*,*,*),nmetal,ntime,nelem), $
 			;yield_sn:REFORM(yield_sn(ri,*,*,*),nmetal,ntime,nelem), $
 			cml_wn:cml_wn, cml_sn:cml_sn, $
@@ -240,7 +245,6 @@ IF settings.p_yohan_pp EQ 1L THEN BEGIN
 
 		array	= CREATE_STRUCT(array,STRTRIM(vrot(ri),2),dumstr)
 	ENDFOR
-
 	SAVE, filename=settings.dir_save + 'swind_yohan_cb_pagb.sav', array
 ENDIF
 
